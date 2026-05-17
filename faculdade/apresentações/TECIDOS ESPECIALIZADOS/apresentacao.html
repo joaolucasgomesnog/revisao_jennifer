@@ -1,0 +1,2687 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tecidos Especializados: Sangue e Seus Componentes</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800;900&family=Lora:ital,wght@0,400;0,700;1,400&display=swap');
+
+  :root {
+    --primary: #9B1B30;
+    --primary-dark: #6B0F20;
+    --primary-light: #C4243B;
+    --accent: #E8B84B;
+    --bg-dark: #0D0A0B;
+    --bg-card: rgba(255,255,255,0.04);
+    --text: #F2EDEB;
+    --text-muted: #A09A98;
+    --glass: rgba(155, 27, 48, 0.08);
+    --glass-border: rgba(155, 27, 48, 0.18);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    font-family: 'Montserrat', sans-serif;
+    background: var(--bg-dark);
+    color: var(--text);
+  }
+
+  /* ===== SLIDE CONTAINER ===== */
+  .presentation {
+    width: 100%; height: 100%;
+    position: relative;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 80px;
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(1);
+    background: var(--bg-dark);
+    overflow: hidden;
+    will-change: transform, opacity;
+  }
+
+  .slide.active {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+  }
+
+  .slide.slide-enter-forward {
+    animation: slideEnterForward 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  .slide.slide-exit-forward {
+    animation: slideExitForward 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  .slide.slide-enter-backward {
+    animation: slideEnterBackward 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  .slide.slide-exit-backward {
+    animation: slideExitBackward 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  @keyframes slideEnterForward {
+    0% {
+      opacity: 0;
+      visibility: visible;
+      transform: translateX(60px) scale(0.95);
+      filter: blur(6px);
+    }
+    40% {
+      opacity: 0.6;
+      filter: blur(2px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+      filter: blur(0);
+    }
+  }
+
+  @keyframes slideExitForward {
+    0% {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+      filter: blur(0);
+    }
+    60% {
+      opacity: 0.3;
+    }
+    100% {
+      opacity: 0;
+      visibility: hidden;
+      transform: translateX(-80px) scale(0.92);
+      filter: blur(8px);
+    }
+  }
+
+  @keyframes slideEnterBackward {
+    0% {
+      opacity: 0;
+      visibility: visible;
+      transform: translateX(-60px) scale(0.95);
+      filter: blur(6px);
+    }
+    40% {
+      opacity: 0.6;
+      filter: blur(2px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+      filter: blur(0);
+    }
+  }
+
+  @keyframes slideExitBackward {
+    0% {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+      filter: blur(0);
+    }
+    60% {
+      opacity: 0.3;
+    }
+    100% {
+      opacity: 0;
+      visibility: hidden;
+      transform: translateX(80px) scale(0.92);
+      filter: blur(8px);
+    }
+  }
+
+  /* ===== BLOOD CELL TRANSITION OVERLAY ===== */
+  .transition-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .transition-overlay .plasma-wash {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(155,27,48,0.06) 0%, rgba(80,8,20,0.14) 100%);
+    opacity: 0;
+  }
+
+  .transition-overlay.animate-forward .plasma-wash,
+  .transition-overlay.animate-backward .plasma-wash {
+    animation: plasmaFade 1.4s ease-in-out forwards;
+  }
+
+  @keyframes plasmaFade {
+    0%   { opacity: 0; }
+    25%  { opacity: 1; }
+    75%  { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  .transition-overlay .cell-transition {
+    position: absolute;
+    opacity: 0;
+    will-change: transform, opacity;
+  }
+
+  .transition-overlay .cell-transition svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    overflow: visible;
+  }
+
+  /* Forward flow */
+  .transition-overlay.animate-forward .cell-transition {
+    animation: cellFlowForward var(--cell-dur, 1.3s) var(--cell-ease, cubic-bezier(0.22, 0.61, 0.36, 1)) var(--cell-delay, 0s) forwards;
+  }
+
+  /* Backward flow */
+  .transition-overlay.animate-backward .cell-transition {
+    animation: cellFlowBackward var(--cell-dur, 1.3s) var(--cell-ease, cubic-bezier(0.22, 0.61, 0.36, 1)) var(--cell-delay, 0s) forwards;
+  }
+
+  @keyframes cellFlowForward {
+    0% {
+      opacity: 0;
+      transform: translate(calc(-14vw + var(--cell-ox, 0px)), var(--cell-y, 0px)) rotate(var(--cell-r0, 0deg)) scale(0.15);
+      filter: blur(3px);
+    }
+    10% {
+      opacity: var(--cell-opacity, 0.85);
+      transform: translate(calc(5vw + var(--cell-ox, 0px)), var(--cell-y, 0px)) rotate(calc(var(--cell-r0, 0deg) + 2deg)) scale(var(--cell-scale, 1));
+      filter: blur(0px);
+    }
+    30% {
+      opacity: var(--cell-opacity, 0.85);
+      transform: translate(calc(30vw + var(--cell-ox, 0px)), calc(var(--cell-y, 0px) + var(--cell-drift, 0px) * 0.5)) rotate(calc(var(--cell-r0, 0deg) + var(--cell-r1, 8deg) * 0.4)) scale(var(--cell-scale, 1));
+      filter: blur(0px);
+    }
+    50% {
+      opacity: var(--cell-opacity, 0.85);
+      transform: translate(calc(50vw + var(--cell-ox, 0px)), calc(var(--cell-y, 0px) + var(--cell-drift, 0px))) rotate(calc(var(--cell-r0, 0deg) + var(--cell-r1, 8deg) * 0.7)) scale(var(--cell-scale, 1));
+      filter: blur(0px);
+    }
+    70% {
+      opacity: var(--cell-opacity, 0.85);
+      transform: translate(calc(70vw + var(--cell-ox, 0px)), calc(var(--cell-y, 0px) + var(--cell-drift, 0px) * 0.6)) rotate(calc(var(--cell-r0, 0deg) + var(--cell-r1, 8deg))) scale(var(--cell-scale, 1));
+      filter: blur(0px);
+    }
+    90% {
+      opacity: var(--cell-opacity, 0.85);
+      transform: translate(calc(95vw + var(--cell-ox, 0px)), calc(var(--cell-y, 0px) + var(--cell-drift, 0px) * 0.3)) rotate(calc(var(--cell-r0, 0deg) + var(--cell-r1, 8deg) + 2deg)) scale(var(--cell-scale, 1));
+      filter: blur(0px);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(calc(114vw + var(--cell-ox, 0px)), var(--cell-y, 0px)) rotate(calc(var(--cell-r0, 0deg) + var(--cell-r1, 8deg) + 4deg)) scale(0.15);
+      filter: blur(3px);
+    }
+  }
+
+  @keyframes cellFlowBackward {
+    0% {
+      opacity: 0;
+      transform: translate(calc(114vw + var(--cell-ox, 0px)), var(--cell-y, 0px)) rotate(var(--cell-r0, 0deg)) scale(0.15);
+      filter: blur(3px);
+    }
+    10% {
+      opacity: var(--cell-opacity, 0.85);
+      transform: translate(calc(95vw + var(--cell-ox, 0px)), var(--cell-y, 0px)) rotate(calc(var(--cell-r0, 0deg) - 2deg)) scale(var(--cell-scale, 1));
+      filter: blur(0px);
+    }
+    30% {
+      opacity: var(--cell-opacity, 0.85);
+      transform: translate(calc(70vw + var(--cell-ox, 0px)), calc(var(--cell-y, 0px) + var(--cell-drift, 0px) * 0.5)) rotate(calc(var(--cell-r0, 0deg) - var(--cell-r1, 8deg) * 0.4)) scale(var(--cell-scale, 1));
+      filter: blur(0px);
+    }
+    50% {
+      opacity: var(--cell-opacity, 0.85);
+      transform: translate(calc(50vw + var(--cell-ox, 0px)), calc(var(--cell-y, 0px) + var(--cell-drift, 0px))) rotate(calc(var(--cell-r0, 0deg) - var(--cell-r1, 8deg) * 0.7)) scale(var(--cell-scale, 1));
+      filter: blur(0px);
+    }
+    70% {
+      opacity: var(--cell-opacity, 0.85);
+      transform: translate(calc(30vw + var(--cell-ox, 0px)), calc(var(--cell-y, 0px) + var(--cell-drift, 0px) * 0.6)) rotate(calc(var(--cell-r0, 0deg) - var(--cell-r1, 8deg))) scale(var(--cell-scale, 1));
+      filter: blur(0px);
+    }
+    90% {
+      opacity: var(--cell-opacity, 0.85);
+      transform: translate(calc(5vw + var(--cell-ox, 0px)), calc(var(--cell-y, 0px) + var(--cell-drift, 0px) * 0.3)) rotate(calc(var(--cell-r0, 0deg) - var(--cell-r1, 8deg) - 2deg)) scale(var(--cell-scale, 1));
+      filter: blur(0px);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(calc(-14vw + var(--cell-ox, 0px)), var(--cell-y, 0px)) rotate(calc(var(--cell-r0, 0deg) - var(--cell-r1, 8deg) - 4deg)) scale(0.15);
+      filter: blur(3px);
+    }
+  }
+
+  /* ===== BACKGROUND EFFECTS ===== */
+  .slide::before {
+    content: '';
+    position: absolute;
+    top: -30%; left: -10%;
+    width: 60%; height: 60%;
+    background: radial-gradient(ellipse, rgba(155,27,48,0.12) 0%, transparent 70%);
+    pointer-events: none;
+    animation: pulseGlow 8s ease-in-out infinite;
+  }
+
+  .slide::after {
+    content: '';
+    position: absolute;
+    bottom: -20%; right: -10%;
+    width: 50%; height: 50%;
+    background: radial-gradient(ellipse, rgba(232,184,75,0.06) 0%, transparent 70%);
+    pointer-events: none;
+    animation: pulseGlow 10s ease-in-out infinite reverse;
+  }
+
+  @keyframes pulseGlow {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.1); }
+  }
+
+  /* ===== FLOATING PARTICLES ===== */
+  .particles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+  }
+
+  .particle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0;
+    animation: floatParticle linear infinite;
+  }
+
+  @keyframes floatParticle {
+    0% { opacity: 0; transform: translateY(100vh) scale(0); }
+    10% { opacity: 0.6; }
+    90% { opacity: 0.3; }
+    100% { opacity: 0; transform: translateY(-10vh) scale(1); }
+  }
+
+  /* ===== TYPOGRAPHY ===== */
+  .slide-title {
+    font-size: 2.6rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 40px;
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    background: linear-gradient(135deg, var(--text) 0%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .slide-title::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    margin: 16px auto 0;
+    border-radius: 2px;
+  }
+
+  .slide-subtitle {
+    font-size: 1.15rem;
+    font-weight: 300;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+    position: relative;
+    z-index: 1;
+    text-align: center;
+  }
+
+  .content-wrapper {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 1300px;
+    display: flex;
+    gap: 50px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .content-column {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* ===== GLASS CARDS ===== */
+  .glass-card {
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 28px 32px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+  }
+
+  .glass-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(155,27,48,0.35);
+  }
+
+  .glass-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px; height: 100%;
+    background: linear-gradient(180deg, var(--primary), var(--accent));
+    border-radius: 4px 0 0 4px;
+  }
+
+  .card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 14px;
+  }
+
+  .card-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .card-list li {
+    padding: 6px 0 6px 24px;
+    position: relative;
+    font-size: 0.95rem;
+    font-weight: 400;
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  .card-list li::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 50%;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--primary);
+    transform: translateY(-50%);
+    box-shadow: 0 0 8px rgba(155,27,48,0.4);
+  }
+
+  .card-text {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: var(--text);
+  }
+
+  .curiosity-box {
+    background: linear-gradient(135deg, rgba(232,184,75,0.08), rgba(155,27,48,0.08));
+    border: 1px solid rgba(232,184,75,0.2);
+    border-radius: 12px;
+    padding: 18px 24px;
+    margin-top: 16px;
+    font-style: italic;
+    color: var(--accent);
+    font-size: 0.9rem;
+  }
+
+  .curiosity-box strong {
+    color: var(--accent);
+    font-style: normal;
+  }
+
+  /* ===== ANIMATED ELEMENTS ===== */
+  .anim-item {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .slide.active .anim-item {
+    animation: revealItem 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  .slide.active .anim-item:nth-child(1) { animation-delay: 0.3s; }
+  .slide.active .anim-item:nth-child(2) { animation-delay: 0.42s; }
+  .slide.active .anim-item:nth-child(3) { animation-delay: 0.54s; }
+  .slide.active .anim-item:nth-child(4) { animation-delay: 0.66s; }
+  .slide.active .anim-item:nth-child(5) { animation-delay: 0.78s; }
+  .slide.active .anim-item:nth-child(6) { animation-delay: 0.9s; }
+
+  @keyframes revealItem {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+      filter: blur(4px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+  }
+
+  /* ===== SVG CELL ILLUSTRATIONS ===== */
+  .cell-scene {
+    width: 100%;
+    max-width: 560px;
+    min-width: 420px;
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+  }
+
+  .cell-scene svg {
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 0 40px rgba(155,27,48,0.25));
+  }
+
+  /* Red blood cell animations */
+  @keyframes floatCell {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-8px) rotate(2deg); }
+    50% { transform: translateY(-3px) rotate(-1deg); }
+    75% { transform: translateY(-12px) rotate(1deg); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.05); opacity: 1; }
+  }
+
+  @keyframes flowRight {
+    0% { transform: translateX(-40px); opacity: 0; }
+    20% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { transform: translateX(40px); opacity: 0; }
+  }
+
+  @keyframes rotate3d {
+    0% { transform: rotateY(0deg) scaleX(1); }
+    25% { transform: rotateY(90deg) scaleX(0.3); }
+    50% { transform: rotateY(180deg) scaleX(1); }
+    75% { transform: rotateY(270deg) scaleX(0.3); }
+    100% { transform: rotateY(360deg) scaleX(1); }
+  }
+
+  @keyframes moveInVessel {
+    0% { transform: translate(0, 0); }
+    25% { transform: translate(15px, -5px); }
+    50% { transform: translate(30px, 0); }
+    75% { transform: translate(15px, 5px); }
+    100% { transform: translate(0, 0); }
+  }
+
+  /* ===== COVER SLIDE ===== */
+  .cover-slide {
+    background: linear-gradient(160deg, #0D0A0B 0%, #1A0A10 40%, #0D0A0B 100%);
+  }
+
+  .cover-title {
+    font-size: 3.2rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    text-align: center;
+    background: linear-gradient(135deg, #fff 0%, var(--accent) 50%, var(--primary-light) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 30px;
+    line-height: 1.2;
+    position: relative;
+    z-index: 1;
+  }
+
+  .cover-divider {
+    width: 120px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--primary), var(--accent), var(--primary), transparent);
+    margin: 0 auto 30px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .cover-info {
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .cover-info p {
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+  }
+
+  .cover-info .professor {
+    margin-top: 14px;
+    font-size: 0.9rem;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .cover-info .date {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 8px;
+  }
+
+  .cover-cells {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .cover-cell {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.06;
+  }
+
+  .cover-cell-1 {
+    width: 300px; height: 120px;
+    background: radial-gradient(ellipse, var(--primary) 30%, transparent 70%);
+    top: 15%; left: 8%;
+    animation: floatCell 12s ease-in-out infinite;
+    border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+  }
+
+  .cover-cell-2 {
+    width: 200px; height: 80px;
+    background: radial-gradient(ellipse, var(--primary-light) 30%, transparent 70%);
+    top: 60%; right: 12%;
+    animation: floatCell 10s ease-in-out infinite 2s;
+    border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+  }
+
+  .cover-cell-3 {
+    width: 250px; height: 100px;
+    background: radial-gradient(ellipse, var(--primary) 30%, transparent 70%);
+    bottom: 20%; left: 20%;
+    animation: floatCell 14s ease-in-out infinite 4s;
+    border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+  }
+
+  /* ===== FOOTER ===== */
+  .slide-footer {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 50px;
+    background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.3) 30%, rgba(0,0,0,0.55) 100%);
+    border-top: 1px solid rgba(155,27,48,0.12);
+    z-index: 10;
+  }
+
+  .footer-logo {
+    height: 168px;
+    opacity: 0.9;
+    filter: brightness(1.1);
+  }
+
+  .footer-page {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+  }
+
+  .footer-ref {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    opacity: 0.65;
+    max-width: 450px;
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  /* ===== NAVIGATION ===== */
+  .nav-controls {
+    position: fixed;
+    bottom: 105px;
+    right: 30px;
+    display: flex;
+    gap: 8px;
+    z-index: 100;
+  }
+
+  .nav-btn {
+    width: 44px; height: 44px;
+    border: 1px solid var(--glass-border);
+    background: rgba(13,10,11,0.8);
+    color: var(--text);
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+  }
+
+  .nav-btn:hover {
+    background: var(--primary);
+    border-color: var(--primary);
+    transform: scale(1.1);
+  }
+
+  .nav-btn svg {
+    width: 18px; height: 18px;
+  }
+
+  /* ===== PROGRESS BAR ===== */
+  .progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 100;
+    box-shadow: 0 0 10px rgba(155,27,48,0.5);
+  }
+
+  /* ===== COMPONENTS GRID ===== */
+  .components-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    width: 100%;
+    max-width: 900px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .component-card {
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 24px;
+    text-align: center;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .component-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--primary);
+    box-shadow: 0 10px 40px rgba(155,27,48,0.15);
+  }
+
+  .component-icon {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 18px;
+  }
+
+  .component-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .component-desc {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  /* ===== DISEASE CARDS ===== */
+  .disease-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    width: 100%;
+    max-width: 900px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .disease-card {
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 28px 24px;
+    text-align: center;
+    transition: all 0.4s ease;
+  }
+
+  .disease-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--primary);
+  }
+
+  .disease-icon {
+    font-size: 2.8rem;
+    margin-bottom: 16px;
+  }
+
+  .disease-icon svg {
+    width: 60px;
+    height: 60px;
+  }
+
+  .disease-name {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--primary-light);
+    margin-bottom: 8px;
+  }
+
+  .disease-desc {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  /* ===== CARE SECTION ===== */
+  .care-section {
+    display: flex;
+    gap: 30px;
+    margin-top: 30px;
+    width: 100%;
+    max-width: 900px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .care-item {
+    flex: 1;
+    background: linear-gradient(135deg, rgba(232,184,75,0.06), rgba(155,27,48,0.06));
+    border: 1px solid rgba(232,184,75,0.15);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    transition: transform 0.3s ease;
+  }
+
+  .care-item:hover {
+    transform: translateY(-3px);
+  }
+
+  .care-icon {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+  }
+
+  .care-text {
+    font-size: 0.88rem;
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  /* ===== OVERVIEW SLIDE (SLIDE 8) ===== */
+  .overview-container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 1000px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .blood-vessel {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    border-radius: 200px;
+    overflow: hidden;
+    background: linear-gradient(180deg, rgba(155,27,48,0.04) 0%, rgba(155,27,48,0.12) 50%, rgba(155,27,48,0.04) 100%);
+    border: 1px solid var(--glass-border);
+  }
+
+  .vessel-inner {
+    position: absolute;
+    inset: 30px;
+    border-radius: 170px;
+    background: linear-gradient(180deg, rgba(100,10,25,0.1) 0%, rgba(155,27,48,0.2) 50%, rgba(100,10,25,0.1) 100%);
+    overflow: hidden;
+  }
+
+  .vessel-label {
+    position: absolute;
+    background: rgba(13,10,11,0.85);
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    padding: 10px 18px;
+    z-index: 5;
+    backdrop-filter: blur(10px);
+  }
+
+  .vessel-label-name {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .vessel-label-desc {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  /* ===== CONCLUSION ===== */
+  .conclusion-points {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    max-width: 800px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .conclusion-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    border-radius: 14px;
+    padding: 22px 28px;
+    transition: all 0.3s ease;
+  }
+
+  .conclusion-item:hover {
+    border-color: var(--primary);
+    transform: translateX(5px);
+  }
+
+  .conclusion-number {
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--primary);
+    opacity: 0.6;
+    min-width: 50px;
+    text-align: center;
+  }
+
+  .conclusion-text {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: var(--text);
+  }
+
+  /* ===== REFERENCE ===== */
+  .reference-slide {
+    text-align: center;
+  }
+
+  .ref-book {
+    font-family: 'Lora', serif;
+    font-size: 1.1rem;
+    color: var(--text);
+    font-style: italic;
+    line-height: 1.7;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .ref-page {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 10px;
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 1100px) {
+    .slide { padding: 50px 50px 100px; }
+    .content-wrapper { gap: 30px; }
+    .cell-scene { max-width: 340px; min-width: 0; }
+  }
+
+  @media (max-width: 900px) {
+    .slide { padding: 40px 30px 100px; }
+    .cover-title { font-size: 2.2rem; letter-spacing: 2px; }
+    .slide-title { font-size: 1.8rem; }
+    .content-wrapper { flex-direction: column; gap: 20px; align-items: center; }
+    .cell-scene { max-width: 300px; }
+    .components-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
+    .disease-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
+    .care-section { flex-direction: column; gap: 14px; }
+    .overview-container svg { max-height: 300px; }
+    .cell-scene { max-width: 400px; min-width: 300px; }
+    .conclusion-item { padding: 16px 20px; }
+    .conclusion-number { font-size: 1.5rem; min-width: 40px; }
+    .conclusion-text { font-size: 0.92rem; }
+    .footer-logo { height: 120px; }
+    .slide-footer { height: 75px; padding: 0 30px; }
+    .nav-controls { bottom: 90px; right: 20px; }
+  }
+
+  @media (max-width: 600px) {
+    .slide { padding: 24px 16px 52px; justify-content: flex-start; padding-top: 42px; overflow-y: auto; }
+    .cover-slide { justify-content: center; padding-top: 24px; overflow: hidden; }
+    .cover-title { font-size: 1.5rem; letter-spacing: 1px; margin-bottom: 16px; }
+    .slide-title { font-size: 1.2rem; margin-bottom: 14px; }
+    .slide-title::after { width: 40px; margin-top: 8px; }
+    .slide-subtitle { font-size: 0.82rem; margin-bottom: 6px; }
+    .content-wrapper { gap: 10px; }
+    .glass-card { padding: 12px 14px; margin-bottom: 8px; border-radius: 10px; }
+    .card-title { font-size: 0.75rem; margin-bottom: 6px; letter-spacing: 1px; }
+    .card-list li { font-size: 0.78rem; padding: 2px 0 2px 18px; line-height: 1.4; }
+    .card-list li::before { width: 6px; height: 6px; }
+    .card-text { font-size: 0.8rem; }
+    .curiosity-box { padding: 10px 14px; font-size: 0.75rem; margin-top: 8px; }
+    .cell-scene { display: none; }
+    .components-grid { grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px !important; }
+    .component-card { padding: 12px 10px; border-radius: 10px; }
+    .component-icon { width: 36px; height: 36px; margin-bottom: 6px; }
+    .component-name { font-size: 0.8rem; margin-bottom: 3px; }
+    .component-desc { font-size: 0.68rem; line-height: 1.3; }
+    .disease-grid { grid-template-columns: 1fr; gap: 8px; }
+    .disease-card { padding: 12px 14px; display: flex; flex-direction: row; align-items: center; gap: 12px; text-align: left; border-radius: 10px; }
+    .disease-icon { font-size: 1rem; margin-bottom: 0; flex-shrink: 0; }
+    .disease-icon svg { width: 32px; height: 32px; }
+    .disease-name { font-size: 0.8rem; margin-bottom: 2px; }
+    .disease-desc { font-size: 0.68rem; line-height: 1.3; }
+    .care-section { flex-direction: row; gap: 6px; margin-top: 10px; }
+    .care-item { padding: 10px 6px; border-radius: 8px; }
+    .care-icon { font-size: 1.1rem; margin-bottom: 4px; }
+    .care-text { font-size: 0.68rem; line-height: 1.3; }
+    .conclusion-points { gap: 8px; }
+    .conclusion-item { gap: 10px; padding: 12px 14px; border-radius: 10px; }
+    .conclusion-number { font-size: 1.2rem; min-width: 32px; }
+    .conclusion-text { font-size: 0.78rem; }
+    .ref-book { font-size: 0.82rem; }
+    .ref-page { font-size: 0.72rem; }
+    .cover-info p { font-size: 0.82rem; }
+    .cover-info .professor { font-size: 0.78rem; }
+    .cover-info .date { font-size: 0.72rem; }
+    .cover-divider { margin-bottom: 18px; }
+    .footer-logo { height: 38px; }
+    .slide-footer { position: fixed; height: 44px; padding: 0 16px; border-top: none; background: rgba(13,10,11,0.95); }
+    .footer-page { font-size: 0.7rem; }
+    .footer-ref { font-size: 0.55rem; max-width: 160px; }
+    .nav-controls { bottom: 52px; right: 10px; gap: 4px; }
+    .nav-btn { width: 34px; height: 34px; }
+    .nav-btn svg { width: 14px; height: 14px; }
+    .speaker-tag { top: 10px; right: 12px; font-size: 0.55rem; padding: 3px 10px; }
+    .overview-container svg { max-height: 250px; }
+    .blood-vessel { height: 260px; }
+  }
+
+  @media (max-width: 400px) {
+    .slide { padding: 20px 12px 48px; padding-top: 38px; }
+    .cover-title { font-size: 1.1rem; }
+    .slide-title { font-size: 1.05rem; margin-bottom: 12px; }
+    .glass-card { padding: 10px 12px; }
+    .card-list li { font-size: 0.72rem; }
+    .components-grid { gap: 6px; }
+    .component-card { padding: 10px 8px; }
+    .disease-card { padding: 10px 12px; gap: 8px; }
+    .footer-logo { height: 30px; }
+    .slide-footer { height: 38px; padding: 0 12px; }
+    .footer-ref { display: none; }
+    .nav-controls { bottom: 44px; }
+    .cover-info p { font-size: 0.72rem; }
+  }
+
+  /* Landscape phones */
+  @media (max-height: 500px) {
+    .slide { padding: 20px 40px 70px; justify-content: flex-start; padding-top: 30px; }
+    .slide-title { font-size: 1.3rem; margin-bottom: 16px; }
+    .cover-title { font-size: 1.6rem; }
+    .glass-card { padding: 14px 18px; margin-bottom: 10px; }
+    .card-list li { padding: 3px 0 3px 20px; font-size: 0.82rem; }
+    .cell-scene { max-width: 200px; }
+    .footer-logo { height: 50px; }
+    .slide-footer { height: 50px; }
+    .nav-controls { bottom: 60px; }
+    .components-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .disease-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .conclusion-item { padding: 12px 16px; }
+  }
+
+  /* ===== MEMBER CARDS ===== */
+  .members-grid {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+    align-items: flex-start;
+    position: relative;
+    z-index: 1;
+    max-width: 1000px;
+    width: 100%;
+  }
+
+  .member-card {
+    flex: 1;
+    max-width: 280px;
+    text-align: center;
+    position: relative;
+  }
+
+  .member-photo-wrapper {
+    width: 200px;
+    height: 200px;
+    margin: 0 auto 24px;
+    position: relative;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid rgba(155,27,48,0.3);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3), 0 0 30px rgba(155,27,48,0.1);
+    transition: all 0.4s ease;
+  }
+
+  .member-card:hover .member-photo-wrapper {
+    border-color: var(--accent);
+    box-shadow: 0 15px 50px rgba(0,0,0,0.4), 0 0 40px rgba(232,184,75,0.15);
+    transform: translateY(-4px);
+  }
+
+  .member-photo-wrapper::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, var(--primary), var(--accent), var(--primary-light), var(--primary));
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .member-card:hover .member-photo-wrapper::before {
+    opacity: 1;
+  }
+
+  .member-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .member-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+  }
+
+  .member-role {
+    font-size: 0.82rem;
+    color: var(--accent);
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 700px) {
+    .members-grid { flex-direction: column; align-items: center; gap: 24px; }
+    .member-card { max-width: 100%; display: flex; align-items: center; gap: 20px; text-align: left; }
+    .member-photo-wrapper { width: 100px; height: 100px; margin: 0; flex-shrink: 0; }
+    .member-name { font-size: 1rem; }
+    .member-role { font-size: 0.72rem; }
+  }
+
+  @media (max-width: 400px) {
+    .member-photo-wrapper { width: 80px; height: 80px; }
+    .members-grid { gap: 16px; }
+    .member-name { font-size: 0.9rem; }
+  }
+
+  /* ===== HIGHLIGHT TEXT ===== */
+  .highlight {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .highlight-red {
+    color: var(--primary-light);
+    font-weight: 600;
+  }
+
+  /* ===== SPEAKER TAG ===== */
+  .speaker-tag {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    background: rgba(155,27,48,0.15);
+    border: 1px solid rgba(155,27,48,0.25);
+    border-radius: 20px;
+    padding: 5px 16px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--primary-light);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    z-index: 10;
+  }
+</style>
+</head>
+<body>
+
+<!-- Progress Bar -->
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- Shared SVG Definitions for Blood Cells -->
+<svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
+  <defs>
+    <filter id="tc-glow" x="-25%" y="-25%" width="150%" height="150%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="1.2" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="tc-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#2A0510" flood-opacity="0.45"/>
+    </filter>
+    <!-- RBC Gradients -->
+    <radialGradient id="tc-rbc-body" cx="48%" cy="44%" r="54%">
+      <stop offset="0%" stop-color="#6B1020"/>
+      <stop offset="22%" stop-color="#9B1B30"/>
+      <stop offset="48%" stop-color="#D03848"/>
+      <stop offset="72%" stop-color="#B82838"/>
+      <stop offset="100%" stop-color="#8B1525"/>
+    </radialGradient>
+    <radialGradient id="tc-rbc-center" cx="50%" cy="50%" r="32%">
+      <stop offset="0%" stop-color="#3C0810" stop-opacity="0.6"/>
+      <stop offset="60%" stop-color="#3C0810" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#3C0810" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="tc-rbc-shine" cx="30%" cy="22%" r="30%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.32"/>
+      <stop offset="50%" stop-color="#FFFFFF" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="tc-rbc-rim" cx="50%" cy="50%" r="50%">
+      <stop offset="65%" stop-color="transparent"/>
+      <stop offset="82%" stop-color="rgba(230,90,110,0.2)"/>
+      <stop offset="96%" stop-color="rgba(180,40,60,0.12)"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+    <radialGradient id="tc-rbc-depth" cx="50%" cy="58%" r="45%">
+      <stop offset="0%" stop-color="transparent"/>
+      <stop offset="60%" stop-color="transparent"/>
+      <stop offset="100%" stop-color="#2A0510" stop-opacity="0.2"/>
+    </radialGradient>
+    <!-- WBC Gradients -->
+    <radialGradient id="tc-wbc-body" cx="44%" cy="40%" r="54%">
+      <stop offset="0%" stop-color="#F8F4F0"/>
+      <stop offset="40%" stop-color="#EDE8E3"/>
+      <stop offset="80%" stop-color="#D8D2CC"/>
+      <stop offset="100%" stop-color="#C0B8B0"/>
+    </radialGradient>
+    <radialGradient id="tc-wbc-nuc" cx="44%" cy="38%" r="52%">
+      <stop offset="0%" stop-color="#9B7CB8"/>
+      <stop offset="40%" stop-color="#7B5CA0"/>
+      <stop offset="100%" stop-color="#4A3068"/>
+    </radialGradient>
+    <radialGradient id="tc-wbc-shine" cx="28%" cy="20%" r="32%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <!-- PLT Gradients -->
+    <radialGradient id="tc-plt-body" cx="42%" cy="38%" r="58%">
+      <stop offset="0%" stop-color="#F5E8B0"/>
+      <stop offset="35%" stop-color="#E0C060"/>
+      <stop offset="100%" stop-color="#B89030"/>
+    </radialGradient>
+    <radialGradient id="tc-plt-core" cx="50%" cy="50%" r="32%">
+      <stop offset="0%" stop-color="#8B6520" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#8B6520" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="tc-plt-shine" cx="32%" cy="25%" r="28%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg>
+
+<!-- Transition Overlay -->
+<div class="transition-overlay" id="transitionOverlay">
+  <!-- Blood plasma wash -->
+  <div class="plasma-wash"></div>
+
+  <!-- === HEMÁCIAS (Red Blood Cells) — foreground === -->
+  <!-- RBC 1 — large, prominent -->
+  <div class="cell-transition" style="width:150px;height:75px;--cell-y:10vh;--cell-r0:-6deg;--cell-r1:12deg;--cell-delay:0s;--cell-dur:1.3s;--cell-drift:-18px;--cell-scale:1;--cell-opacity:0.82;--cell-ox:-25px;">
+    <svg viewBox="0 0 160 80" xmlns="http://www.w3.org/2000/svg" filter="url(#tc-shadow)">
+      <ellipse cx="80" cy="40" rx="72" ry="35" fill="url(#tc-rbc-body)"/>
+      <ellipse cx="80" cy="40" rx="72" ry="35" fill="url(#tc-rbc-rim)"/>
+      <ellipse cx="80" cy="40" rx="72" ry="35" fill="url(#tc-rbc-depth)"/>
+      <ellipse cx="80" cy="40" rx="28" ry="15" fill="url(#tc-rbc-center)"/>
+      <ellipse cx="80" cy="40" rx="36" ry="18" fill="none" stroke="rgba(60,8,16,0.12)" stroke-width="1"/>
+      <ellipse cx="80" cy="40" rx="68" ry="32" fill="none" stroke="rgba(240,110,130,0.12)" stroke-width="2.5"/>
+      <ellipse cx="80" cy="40" rx="72" ry="35" fill="url(#tc-rbc-shine)"/>
+    </svg>
+  </div>
+
+  <!-- RBC 2 -->
+  <div class="cell-transition" style="width:130px;height:65px;--cell-y:36vh;--cell-r0:10deg;--cell-r1:-8deg;--cell-delay:0.05s;--cell-dur:1.25s;--cell-drift:22px;--cell-scale:0.95;--cell-opacity:0.78;--cell-ox:5px;">
+    <svg viewBox="0 0 160 80" xmlns="http://www.w3.org/2000/svg" filter="url(#tc-shadow)">
+      <ellipse cx="80" cy="40" rx="72" ry="35" fill="url(#tc-rbc-body)"/>
+      <ellipse cx="80" cy="40" rx="72" ry="35" fill="url(#tc-rbc-rim)"/>
+      <ellipse cx="80" cy="40" rx="72" ry="35" fill="url(#tc-rbc-depth)"/>
+      <ellipse cx="80" cy="40" rx="28" ry="15" fill="url(#tc-rbc-center)"/>
+      <ellipse cx="80" cy="40" rx="36" ry="18" fill="none" stroke="rgba(60,8,16,0.12)" stroke-width="1"/>
+      <ellipse cx="80" cy="40" rx="68" ry="32" fill="none" stroke="rgba(240,110,130,0.12)" stroke-width="2.5"/>
+      <ellipse cx="80" cy="40" rx="72" ry="35" fill="url(#tc-rbc-shine)"/>
+    </svg>
+  </div>
+
+  <!-- RBC 3 — largest -->
+  <div class="cell-transition" style="width:160px;height:80px;--cell-y:58vh;--cell-r0:-2deg;--cell-r1:10deg;--cell-delay:0.1s;--cell-dur:1.35s;--cell-drift:-14px;--cell-scale:1.05;--cell-opacity:0.85;--cell-ox:18px;">
+    <svg viewBox="0 0 160 80" xmlns="http://www.w3.org/2000/svg" filter="url(#tc-shadow)">
+      <ellipse cx="80" cy="40" rx="72" ry="35" fill="url(#tc-rbc-body)"/>
+      <ellipse cx="80" cy="40" rx="72" ry="35" fill="url(#tc-rbc-rim)"/>
+      <ellipse cx="80" cy="40" rx="72" ry="35" fill="url(#tc-rbc-depth)"/>
+      <ellipse cx="80" cy="40" rx="28" ry="15" fill="url(#tc-rbc-center)"/>
+      <ellipse cx="80" cy="40" rx="36" ry="18" fill="none" stroke="rgba(60,8,16,0.12)" stroke-width="1"/>
+      <ellipse cx="80" cy="40" rx="68" ry="32" fill="none" stroke="rgba(240,110,130,0.12)" stroke-width="2.5"/>
+      <ellipse cx="80" cy="40" rx="72" ry="35" fill="url(#tc-rbc-shine)"/>
+    </svg>
+  </div>
+
+  <!-- RBC 4 -->
+  <div class="cell-transition" style="width:110px;height:55px;--cell-y:80vh;--cell-r0:5deg;--cell-r1:-7deg;--cell-delay:0.07s;--cell-dur:1.2s;--cell-drift:16px;--cell-scale:0.88;--cell-opacity:0.72;--cell-ox:-12px;">
+    <svg viewBox="0 0 160 80" xmlns="http://www.w3.org/2000/svg" filter="url(#tc-shadow)">
+      <ellipse cx="80" cy="40" rx="72" ry="35" fill="url(#tc-rbc-body)"/>
+      <ellipse cx="80" cy="40" rx="72" ry="35" fill="url(#tc-rbc-rim)"/>
+      <ellipse cx="80" cy="40" rx="72" ry="35" fill="url(#tc-rbc-depth)"/>
+      <ellipse cx="80" cy="40" rx="28" ry="15" fill="url(#tc-rbc-center)"/>
+      <ellipse cx="80" cy="40" rx="36" ry="18" fill="none" stroke="rgba(60,8,16,0.12)" stroke-width="1"/>
+      <ellipse cx="80" cy="40" rx="68" ry="32" fill="none" stroke="rgba(240,110,130,0.12)" stroke-width="2.5"/>
+      <ellipse cx="80" cy="40" rx="72" ry="35" fill="url(#tc-rbc-shine)"/>
+    </svg>
+  </div>
+
+  <!-- RBC 5 -->
+  <div class="cell-transition" style="width:120px;height:60px;--cell-y:46vh;--cell-r0:8deg;--cell-r1:-12deg;--cell-delay:0.03s;--cell-dur:1.28s;--cell-drift:20px;--cell-scale:0.92;--cell-opacity:0.75;--cell-ox:-40px;">
+    <svg viewBox="0 0 160 80" xmlns="http://www.w3.org/2000/svg" filter="url(#tc-shadow)">
+      <ellipse cx="80" cy="40" rx="72" ry="35" fill="url(#tc-rbc-body)"/>
+      <ellipse cx="80" cy="40" rx="72" ry="35" fill="url(#tc-rbc-rim)"/>
+      <ellipse cx="80" cy="40" rx="72" ry="35" fill="url(#tc-rbc-depth)"/>
+      <ellipse cx="80" cy="40" rx="28" ry="15" fill="url(#tc-rbc-center)"/>
+      <ellipse cx="80" cy="40" rx="36" ry="18" fill="none" stroke="rgba(60,8,16,0.12)" stroke-width="1"/>
+      <ellipse cx="80" cy="40" rx="68" ry="32" fill="none" stroke="rgba(240,110,130,0.12)" stroke-width="2.5"/>
+      <ellipse cx="80" cy="40" rx="72" ry="35" fill="url(#tc-rbc-shine)"/>
+    </svg>
+  </div>
+
+  <!-- === HEMÁCIAS — background (smaller, translucent) === -->
+  <!-- RBC 6 — far back -->
+  <div class="cell-transition" style="width:70px;height:35px;--cell-y:6vh;--cell-r0:18deg;--cell-r1:-10deg;--cell-delay:0.16s;--cell-dur:1.45s;--cell-drift:8px;--cell-scale:0.5;--cell-opacity:0.35;--cell-ox:70px;">
+    <svg viewBox="0 0 160 80" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="80" cy="40" rx="72" ry="35" fill="url(#tc-rbc-body)"/>
+      <ellipse cx="80" cy="40" rx="28" ry="15" fill="url(#tc-rbc-center)"/>
+      <ellipse cx="80" cy="40" rx="72" ry="35" fill="url(#tc-rbc-shine)"/>
+    </svg>
+  </div>
+
+  <!-- RBC 7 — far back -->
+  <div class="cell-transition" style="width:65px;height:33px;--cell-y:70vh;--cell-r0:-14deg;--cell-r1:7deg;--cell-delay:0.12s;--cell-dur:1.4s;--cell-drift:-7px;--cell-scale:0.55;--cell-opacity:0.38;--cell-ox:-55px;">
+    <svg viewBox="0 0 160 80" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="80" cy="40" rx="72" ry="35" fill="url(#tc-rbc-body)"/>
+      <ellipse cx="80" cy="40" rx="28" ry="15" fill="url(#tc-rbc-center)"/>
+      <ellipse cx="80" cy="40" rx="72" ry="35" fill="url(#tc-rbc-shine)"/>
+    </svg>
+  </div>
+
+  <!-- RBC 8 — far back -->
+  <div class="cell-transition" style="width:55px;height:28px;--cell-y:24vh;--cell-r0:-12deg;--cell-r1:15deg;--cell-delay:0.18s;--cell-dur:1.5s;--cell-drift:-5px;--cell-scale:0.45;--cell-opacity:0.3;--cell-ox:45px;">
+    <svg viewBox="0 0 160 80" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="80" cy="40" rx="72" ry="35" fill="url(#tc-rbc-body)"/>
+      <ellipse cx="80" cy="40" rx="28" ry="15" fill="url(#tc-rbc-center)"/>
+      <ellipse cx="80" cy="40" rx="72" ry="35" fill="url(#tc-rbc-shine)"/>
+    </svg>
+  </div>
+
+  <!-- RBC 9 — far back -->
+  <div class="cell-transition" style="width:60px;height:30px;--cell-y:90vh;--cell-r0:4deg;--cell-r1:5deg;--cell-delay:0.2s;--cell-dur:1.48s;--cell-drift:4px;--cell-scale:0.42;--cell-opacity:0.28;--cell-ox:30px;">
+    <svg viewBox="0 0 160 80" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="80" cy="40" rx="72" ry="35" fill="url(#tc-rbc-body)"/>
+      <ellipse cx="80" cy="40" rx="28" ry="15" fill="url(#tc-rbc-center)"/>
+      <ellipse cx="80" cy="40" rx="72" ry="35" fill="url(#tc-rbc-shine)"/>
+    </svg>
+  </div>
+
+  <!-- === LEUCÓCITOS (White Blood Cells — Neutrophils) === -->
+  <!-- WBC 1 — main, large -->
+  <div class="cell-transition" style="width:110px;height:110px;--cell-y:40vh;--cell-r0:0deg;--cell-r1:12deg;--cell-delay:0.06s;--cell-dur:1.5s;--cell-drift:-25px;--cell-scale:1;--cell-opacity:0.6;--cell-ox:8px;">
+    <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" filter="url(#tc-shadow)">
+      <!-- Cell membrane -->
+      <circle cx="60" cy="60" r="52" fill="url(#tc-wbc-body)" stroke="#B8B0A8" stroke-width="0.8"/>
+      <!-- Cytoplasmic granules -->
+      <circle cx="26" cy="36" r="2.5" fill="#D0C0D8" opacity="0.5"/>
+      <circle cx="90" cy="30" r="2" fill="#D0C0D8" opacity="0.45"/>
+      <circle cx="20" cy="72" r="2.2" fill="#D0C0D8" opacity="0.4"/>
+      <circle cx="94" cy="76" r="2.8" fill="#D0C0D8" opacity="0.5"/>
+      <circle cx="80" cy="94" r="2" fill="#D0C0D8" opacity="0.4"/>
+      <circle cx="34" cy="90" r="1.8" fill="#D0C0D8" opacity="0.35"/>
+      <circle cx="52" cy="22" r="1.6" fill="#D0C0D8" opacity="0.3"/>
+      <circle cx="88" cy="54" r="2.3" fill="#D0C0D8" opacity="0.42"/>
+      <circle cx="30" cy="52" r="1.4" fill="#D0C0D8" opacity="0.3"/>
+      <circle cx="74" cy="22" r="1.8" fill="#D0C0D8" opacity="0.35"/>
+      <!-- Multi-lobed nucleus (4 lobes) -->
+      <ellipse cx="40" cy="48" rx="16" ry="13" fill="url(#tc-wbc-nuc)" opacity="0.78"/>
+      <ellipse cx="60" cy="42" rx="14" ry="12" fill="url(#tc-wbc-nuc)" opacity="0.78"/>
+      <ellipse cx="72" cy="58" rx="13" ry="14" fill="url(#tc-wbc-nuc)" opacity="0.75"/>
+      <ellipse cx="52" cy="66" rx="12" ry="11" fill="url(#tc-wbc-nuc)" opacity="0.72"/>
+      <!-- Chromatin bridges -->
+      <rect x="52" y="44" width="6" height="4" rx="2" fill="#6B4C8A" opacity="0.55" transform="rotate(-12 55 46)"/>
+      <rect x="66" y="50" width="5" height="4" rx="2" fill="#6B4C8A" opacity="0.5" transform="rotate(18 68 52)"/>
+      <rect x="48" y="60" width="6" height="3.5" rx="1.5" fill="#6B4C8A" opacity="0.48" transform="rotate(-8 51 62)"/>
+      <!-- Nuclear chromatin texture -->
+      <ellipse cx="42" cy="46" rx="7" ry="5" fill="#A88CC0" opacity="0.18"/>
+      <ellipse cx="64" cy="54" rx="6" ry="7" fill="#A88CC0" opacity="0.15"/>
+      <ellipse cx="54" cy="63" rx="5" ry="4" fill="#A88CC0" opacity="0.12"/>
+      <!-- Specular highlight -->
+      <circle cx="60" cy="60" r="52" fill="url(#tc-wbc-shine)"/>
+    </svg>
+  </div>
+
+  <!-- WBC 2 — smaller, background -->
+  <div class="cell-transition" style="width:60px;height:60px;--cell-y:74vh;--cell-r0:8deg;--cell-r1:-6deg;--cell-delay:0.14s;--cell-dur:1.4s;--cell-drift:12px;--cell-scale:0.6;--cell-opacity:0.32;--cell-ox:-20px;">
+    <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="60" cy="60" r="52" fill="url(#tc-wbc-body)" stroke="#C0B8B0" stroke-width="0.6"/>
+      <circle cx="30" cy="40" r="2" fill="#D0C0D8" opacity="0.4"/>
+      <circle cx="86" cy="42" r="1.8" fill="#D0C0D8" opacity="0.35"/>
+      <circle cx="78" cy="82" r="2" fill="#D0C0D8" opacity="0.38"/>
+      <ellipse cx="44" cy="50" rx="15" ry="12" fill="url(#tc-wbc-nuc)" opacity="0.7"/>
+      <ellipse cx="62" cy="46" rx="13" ry="11" fill="url(#tc-wbc-nuc)" opacity="0.7"/>
+      <ellipse cx="68" cy="62" rx="12" ry="13" fill="url(#tc-wbc-nuc)" opacity="0.68"/>
+      <rect x="54" y="46" width="5" height="3.5" rx="1.5" fill="#6B4C8A" opacity="0.45" transform="rotate(-10 56 48)"/>
+      <circle cx="60" cy="60" r="52" fill="url(#tc-wbc-shine)"/>
+    </svg>
+  </div>
+
+  <!-- === PLAQUETAS (Platelets) === -->
+  <!-- PLT 1 -->
+  <div class="cell-transition" style="width:38px;height:30px;--cell-y:18vh;--cell-r0:28deg;--cell-r1:-22deg;--cell-delay:0.04s;--cell-dur:1.1s;--cell-drift:-7px;--cell-scale:0.9;--cell-opacity:0.7;--cell-ox:12px;">
+    <svg viewBox="0 0 60 48" xmlns="http://www.w3.org/2000/svg" filter="url(#tc-glow)">
+      <path d="M30 6 C42 3, 54 14, 55 24 C56 35, 44 44, 30 42 C16 44, 4 35, 5 24 C6 14, 18 3, 30 6Z" fill="url(#tc-plt-body)" stroke="#A88030" stroke-width="0.6"/>
+      <ellipse cx="30" cy="24" rx="11" ry="9" fill="url(#tc-plt-core)"/>
+      <circle cx="26" cy="22" r="2.2" fill="#8B6520" opacity="0.35"/>
+      <circle cx="34" cy="26" r="1.8" fill="#8B6520" opacity="0.3"/>
+      <circle cx="30" cy="19" r="1.5" fill="#8B6520" opacity="0.25"/>
+      <path d="M30 6 C42 3, 54 14, 55 24 C56 35, 44 44, 30 42 C16 44, 4 35, 5 24 C6 14, 18 3, 30 6Z" fill="url(#tc-plt-shine)"/>
+    </svg>
+  </div>
+
+  <!-- PLT 2 -->
+  <div class="cell-transition" style="width:30px;height:24px;--cell-y:33vh;--cell-r0:-18deg;--cell-r1:15deg;--cell-delay:0.09s;--cell-dur:1.05s;--cell-drift:10px;--cell-scale:0.78;--cell-opacity:0.62;--cell-ox:-18px;">
+    <svg viewBox="0 0 60 48" xmlns="http://www.w3.org/2000/svg" filter="url(#tc-glow)">
+      <path d="M30 6 C42 3, 54 14, 55 24 C56 35, 44 44, 30 42 C16 44, 4 35, 5 24 C6 14, 18 3, 30 6Z" fill="url(#tc-plt-body)" stroke="#A88030" stroke-width="0.6"/>
+      <ellipse cx="30" cy="24" rx="11" ry="9" fill="url(#tc-plt-core)"/>
+      <circle cx="27" cy="21" r="2" fill="#8B6520" opacity="0.3"/>
+      <circle cx="33" cy="27" r="1.6" fill="#8B6520" opacity="0.25"/>
+      <path d="M30 6 C42 3, 54 14, 55 24 C56 35, 44 44, 30 42 C16 44, 4 35, 5 24 C6 14, 18 3, 30 6Z" fill="url(#tc-plt-shine)"/>
+    </svg>
+  </div>
+
+  <!-- PLT 3 -->
+  <div class="cell-transition" style="width:34px;height:27px;--cell-y:53vh;--cell-r0:12deg;--cell-r1:-18deg;--cell-delay:0.15s;--cell-dur:1.12s;--cell-drift:-5px;--cell-scale:0.85;--cell-opacity:0.65;--cell-ox:30px;">
+    <svg viewBox="0 0 60 48" xmlns="http://www.w3.org/2000/svg" filter="url(#tc-glow)">
+      <path d="M30 6 C42 3, 54 14, 55 24 C56 35, 44 44, 30 42 C16 44, 4 35, 5 24 C6 14, 18 3, 30 6Z" fill="url(#tc-plt-body)" stroke="#A88030" stroke-width="0.6"/>
+      <ellipse cx="30" cy="24" rx="11" ry="9" fill="url(#tc-plt-core)"/>
+      <circle cx="28" cy="20" r="1.8" fill="#8B6520" opacity="0.3"/>
+      <circle cx="32" cy="28" r="2" fill="#8B6520" opacity="0.28"/>
+      <circle cx="24" cy="26" r="1.4" fill="#8B6520" opacity="0.22"/>
+      <path d="M30 6 C42 3, 54 14, 55 24 C56 35, 44 44, 30 42 C16 44, 4 35, 5 24 C6 14, 18 3, 30 6Z" fill="url(#tc-plt-shine)"/>
+    </svg>
+  </div>
+
+  <!-- PLT 4 -->
+  <div class="cell-transition" style="width:26px;height:21px;--cell-y:66vh;--cell-r0:-8deg;--cell-r1:10deg;--cell-delay:0.11s;--cell-dur:1.08s;--cell-drift:8px;--cell-scale:0.72;--cell-opacity:0.52;--cell-ox:-35px;">
+    <svg viewBox="0 0 60 48" xmlns="http://www.w3.org/2000/svg">
+      <path d="M30 6 C42 3, 54 14, 55 24 C56 35, 44 44, 30 42 C16 44, 4 35, 5 24 C6 14, 18 3, 30 6Z" fill="url(#tc-plt-body)" stroke="#A88030" stroke-width="0.5"/>
+      <ellipse cx="30" cy="24" rx="10" ry="8" fill="url(#tc-plt-core)"/>
+      <circle cx="27" cy="22" r="1.5" fill="#8B6520" opacity="0.28"/>
+      <path d="M30 6 C42 3, 54 14, 55 24 C56 35, 44 44, 30 42 C16 44, 4 35, 5 24 C6 14, 18 3, 30 6Z" fill="url(#tc-plt-shine)"/>
+    </svg>
+  </div>
+
+  <!-- PLT 5 -->
+  <div class="cell-transition" style="width:22px;height:18px;--cell-y:86vh;--cell-r0:22deg;--cell-r1:-12deg;--cell-delay:0.07s;--cell-dur:1.02s;--cell-drift:-4px;--cell-scale:0.6;--cell-opacity:0.45;--cell-ox:55px;">
+    <svg viewBox="0 0 60 48" xmlns="http://www.w3.org/2000/svg">
+      <path d="M30 6 C42 3, 54 14, 55 24 C56 35, 44 44, 30 42 C16 44, 4 35, 5 24 C6 14, 18 3, 30 6Z" fill="url(#tc-plt-body)" stroke="#A88030" stroke-width="0.5"/>
+      <ellipse cx="30" cy="24" rx="10" ry="8" fill="url(#tc-plt-core)"/>
+      <path d="M30 6 C42 3, 54 14, 55 24 C56 35, 44 44, 30 42 C16 44, 4 35, 5 24 C6 14, 18 3, 30 6Z" fill="url(#tc-plt-shine)"/>
+    </svg>
+  </div>
+</div>
+
+<!-- Navigation -->
+<div class="nav-controls">
+  <button class="nav-btn" onclick="prevSlide()" title="Anterior">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <button class="nav-btn" onclick="nextSlide()" title="Próximo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+  </button>
+</div>
+
+<div class="presentation">
+
+  <!-- ========== SLIDE 1 — CAPA ========== -->
+  <div class="slide cover-slide active" data-slide="1">
+    <div class="cover-cells">
+      <div class="cover-cell cover-cell-1"></div>
+      <div class="cover-cell cover-cell-2"></div>
+      <div class="cover-cell cover-cell-3"></div>
+    </div>
+    <div class="particles" id="coverParticles"></div>
+
+    <div class="anim-item" style="margin-bottom: 20px;">
+      <svg width="160" height="160" viewBox="0 0 160 160" style="filter: drop-shadow(0 0 30px rgba(155,27,48,0.3));">
+        <!-- Animated blood drop -->
+        <defs>
+          <radialGradient id="bloodGrad" cx="50%" cy="45%" r="50%">
+            <stop offset="0%" stop-color="#E8B84B" stop-opacity="0.3"/>
+            <stop offset="40%" stop-color="#C4243B" stop-opacity="0.6"/>
+            <stop offset="100%" stop-color="#6B0F20" stop-opacity="0.8"/>
+          </radialGradient>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        <path d="M80 15 C80 15 35 75 35 105 C35 130 55 155 80 155 C105 155 125 130 125 105 C125 75 80 15 80 15Z" fill="url(#bloodGrad)" filter="url(#glow)">
+          <animate attributeName="d" dur="4s" repeatCount="indefinite" values="
+            M80 15 C80 15 35 75 35 105 C35 130 55 155 80 155 C105 155 125 130 125 105 C125 75 80 15 80 15Z;
+            M80 18 C80 18 38 78 38 106 C38 128 56 152 80 152 C104 152 122 128 122 106 C122 78 80 18 80 18Z;
+            M80 15 C80 15 35 75 35 105 C35 130 55 155 80 155 C105 155 125 130 125 105 C125 75 80 15 80 15Z
+          "/>
+        </path>
+        <!-- Shine -->
+        <ellipse cx="62" cy="90" rx="10" ry="18" fill="rgba(255,255,255,0.08)" transform="rotate(-15,62,90)">
+          <animate attributeName="opacity" dur="3s" repeatCount="indefinite" values="0.05;0.12;0.05"/>
+        </ellipse>
+      </svg>
+    </div>
+
+    <h1 class="cover-title anim-item">Tecidos Especializados:<br>Sangue e Seus Componentes</h1>
+    <div class="cover-divider anim-item"></div>
+    <div class="cover-info anim-item">
+      <p>Jennifer Aquino, Letícia Gomes e Yasmin Oliveira</p>
+      <p class="professor">Profª Joanna Silvestre</p>
+      <p class="date">18 de maio de 2026</p>
+    </div>
+
+    <div class="slide-footer">
+      <img src="https://images.seeklogo.com/logo-png/47/2/uninassau-logo-png_seeklogo-475645.png" alt="UNINASSAU" class="footer-logo">
+      <span class="footer-ref">Histologia Básica — Junqueira & Carneiro, 13ª ed.</span>
+      <span class="footer-page">1 / 12</span>
+    </div>
+  </div>
+
+  <!-- ========== SLIDE 2 — INTEGRANTES ========== -->
+  <div class="slide" data-slide="2">
+    <h2 class="slide-title anim-item">Integrantes</h2>
+
+    <div class="members-grid">
+      <div class="member-card anim-item">
+        <div class="member-photo-wrapper">
+          <img src="integrantes/Jennifer.jpeg" alt="Jennifer Aquino" class="member-photo">
+        </div>
+        <div>
+          <div class="member-name">Jennifer Aquino</div>
+          <div class="member-role">Integrante</div>
+        </div>
+      </div>
+
+      <div class="member-card anim-item">
+        <div class="member-photo-wrapper">
+          <img src="integrantes/Leticia.jpeg" alt="Letícia Gomes" class="member-photo">
+        </div>
+        <div>
+          <div class="member-name">Letícia Gomes</div>
+          <div class="member-role">Integrante</div>
+        </div>
+      </div>
+
+      <div class="member-card anim-item">
+        <div class="member-photo-wrapper">
+          <img src="integrantes/Yasmin.jpeg" alt="Yasmin de Sá" class="member-photo">
+        </div>
+        <div>
+          <div class="member-name">Yasmin de Sá</div>
+          <div class="member-role">Integrante</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: 30px; text-align: center; position: relative; z-index: 1;" class="anim-item">
+      <p style="font-size: 0.85rem; color: var(--text-muted);">Profª <span class="highlight">Joanna Silvestre</span></p>
+      <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">Disciplina de Histologia</p>
+    </div>
+
+    <div class="slide-footer">
+      <img src="https://images.seeklogo.com/logo-png/47/2/uninassau-logo-png_seeklogo-475645.png" alt="UNINASSAU" class="footer-logo">
+      <span class="footer-ref">Histologia Básica — Junqueira &amp; Carneiro, 13ª ed.</span>
+      <span class="footer-page">2 / 12</span>
+    </div>
+  </div>
+
+  <!-- ========== SLIDE 3 — O QUE É O SANGUE ========== -->
+  <div class="slide" data-slide="2">
+    <span class="speaker-tag">Jennifer</span>
+    <h2 class="slide-title anim-item">O que é o Sangue?</h2>
+
+    <div class="content-wrapper">
+      <div class="content-column">
+        <div class="glass-card anim-item">
+          <div class="card-title">Conceito</div>
+          <ul class="card-list">
+            <li>O sangue é um <span class="highlight">tecido conjuntivo especializado</span></li>
+            <li>Circula pelos vasos sanguíneos por todo o corpo</li>
+            <li>Fundamental para o funcionamento do organismo</li>
+          </ul>
+        </div>
+        <div class="glass-card anim-item">
+          <div class="card-title">Funções Principais</div>
+          <ul class="card-list">
+            <li><span class="highlight-red">Transporte de oxigênio</span> para os tecidos</li>
+            <li>Defesa do organismo contra patógenos</li>
+            <li>Transporte de nutrientes e hormônios</li>
+            <li>Controle da temperatura corporal</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="cell-scene anim-item">
+        <svg viewBox="0 0 400 360" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="rbcGrad" cx="50%" cy="40%" r="50%">
+              <stop offset="0%" stop-color="#D44050"/>
+              <stop offset="60%" stop-color="#9B1B30"/>
+              <stop offset="100%" stop-color="#6B0F20"/>
+            </radialGradient>
+            <radialGradient id="wbcGrad" cx="40%" cy="35%" r="55%">
+              <stop offset="0%" stop-color="#F5F0EB"/>
+              <stop offset="50%" stop-color="#D4CFC8"/>
+              <stop offset="100%" stop-color="#A09A98"/>
+            </radialGradient>
+            <radialGradient id="plasmaGrad" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#E8B84B" stop-opacity="0.3"/>
+              <stop offset="100%" stop-color="#E8B84B" stop-opacity="0.05"/>
+            </radialGradient>
+            <filter id="cellShadow">
+              <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000" flood-opacity="0.3"/>
+            </filter>
+          </defs>
+
+          <!-- Plasma background -->
+          <rect x="10" y="10" width="380" height="340" rx="30" fill="rgba(232,184,75,0.04)" stroke="rgba(232,184,75,0.1)" stroke-width="1"/>
+
+          <!-- Flowing red blood cells -->
+          <g filter="url(#cellShadow)">
+            <ellipse cx="100" cy="120" rx="42" ry="20" fill="url(#rbcGrad)" opacity="0.9">
+              <animateTransform attributeName="transform" type="translate" values="0,0; 15,-8; 30,0; 15,8; 0,0" dur="6s" repeatCount="indefinite"/>
+            </ellipse>
+            <ellipse cx="100" cy="120" rx="18" ry="8" fill="#6B0F20" opacity="0.4">
+              <animateTransform attributeName="transform" type="translate" values="0,0; 15,-8; 30,0; 15,8; 0,0" dur="6s" repeatCount="indefinite"/>
+            </ellipse>
+          </g>
+
+          <g filter="url(#cellShadow)">
+            <ellipse cx="280" cy="90" rx="38" ry="18" fill="url(#rbcGrad)" opacity="0.7">
+              <animateTransform attributeName="transform" type="translate" values="0,0; -10,6; -20,0; -10,-6; 0,0" dur="7s" repeatCount="indefinite"/>
+            </ellipse>
+            <ellipse cx="280" cy="90" rx="16" ry="7" fill="#6B0F20" opacity="0.4">
+              <animateTransform attributeName="transform" type="translate" values="0,0; -10,6; -20,0; -10,-6; 0,0" dur="7s" repeatCount="indefinite"/>
+            </ellipse>
+          </g>
+
+          <g filter="url(#cellShadow)">
+            <ellipse cx="200" cy="200" rx="44" ry="21" fill="url(#rbcGrad)" opacity="0.85">
+              <animateTransform attributeName="transform" type="translate" values="0,0; 8,-10; 20,-5; 8,5; 0,0" dur="8s" repeatCount="indefinite"/>
+            </ellipse>
+            <ellipse cx="200" cy="200" rx="19" ry="9" fill="#6B0F20" opacity="0.35">
+              <animateTransform attributeName="transform" type="translate" values="0,0; 8,-10; 20,-5; 8,5; 0,0" dur="8s" repeatCount="indefinite"/>
+            </ellipse>
+          </g>
+
+          <!-- White blood cell -->
+          <g filter="url(#cellShadow)">
+            <circle cx="310" cy="240" r="30" fill="url(#wbcGrad)" opacity="0.85">
+              <animateTransform attributeName="transform" type="translate" values="0,0; -6,10; 0,18; 6,10; 0,0" dur="9s" repeatCount="indefinite"/>
+              <animate attributeName="r" values="30;32;29;31;30" dur="5s" repeatCount="indefinite"/>
+            </circle>
+            <!-- Nucleus -->
+            <path d="M298 235 Q310 225 318 235 Q325 245 315 250 Q305 255 298 248 Q292 240 298 235Z" fill="#7B6BA0" opacity="0.6">
+              <animateTransform attributeName="transform" type="translate" values="0,0; -6,10; 0,18; 6,10; 0,0" dur="9s" repeatCount="indefinite"/>
+            </path>
+          </g>
+
+          <!-- Platelets -->
+          <circle cx="160" cy="290" r="8" fill="#E8B84B" opacity="0.6">
+            <animateTransform attributeName="transform" type="translate" values="0,0; 12,-4; 20,0; 12,4; 0,0" dur="5s" repeatCount="indefinite"/>
+          </circle>
+          <circle cx="140" cy="310" r="6" fill="#E8B84B" opacity="0.5">
+            <animateTransform attributeName="transform" type="translate" values="0,0; 8,3; 15,0; 8,-3; 0,0" dur="4s" repeatCount="indefinite"/>
+          </circle>
+          <circle cx="180" cy="300" r="7" fill="#E8B84B" opacity="0.55">
+            <animateTransform attributeName="transform" type="translate" values="0,0; -5,6; -10,0; -5,-6; 0,0" dur="6s" repeatCount="indefinite"/>
+          </circle>
+
+          <!-- Labels -->
+          <text x="60" y="165" font-size="10" fill="#C4243B" font-weight="600" font-family="Montserrat">Hemácias</text>
+          <text x="280" y="290" font-size="10" fill="#A09A98" font-weight="600" font-family="Montserrat">Leucócito</text>
+          <text x="130" y="335" font-size="10" fill="#E8B84B" font-weight="600" font-family="Montserrat">Plaquetas</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <img src="https://images.seeklogo.com/logo-png/47/2/uninassau-logo-png_seeklogo-475645.png" alt="UNINASSAU" class="footer-logo">
+      <span class="footer-ref">Histologia Básica — Junqueira & Carneiro, 13ª ed.</span>
+      <span class="footer-page">3 / 12</span>
+    </div>
+  </div>
+
+  <!-- ========== SLIDE 3 — COMPONENTES DO SANGUE ========== -->
+  <div class="slide" data-slide="3">
+    <span class="speaker-tag">Jennifer</span>
+    <h2 class="slide-title anim-item">Componentes do Sangue</h2>
+    <p class="slide-subtitle anim-item">O sangue é formado por quatro componentes principais</p>
+
+    <div class="components-grid" style="margin-top: 30px;">
+      <div class="component-card anim-item">
+        <div class="component-icon">
+          <svg viewBox="0 0 70 70">
+            <rect x="5" y="5" width="60" height="60" rx="12" fill="rgba(232,184,75,0.12)" stroke="rgba(232,184,75,0.3)" stroke-width="1"/>
+            <circle cx="20" cy="25" r="3" fill="#E8B84B" opacity="0.4"/>
+            <circle cx="45" cy="35" r="2" fill="#E8B84B" opacity="0.3"/>
+            <circle cx="30" cy="50" r="2.5" fill="#E8B84B" opacity="0.35"/>
+            <circle cx="50" cy="20" r="1.5" fill="#E8B84B" opacity="0.25"/>
+            <text x="35" y="38" text-anchor="middle" font-size="8" fill="#E8B84B" opacity="0.5" font-family="Montserrat">~</text>
+            <animateTransform attributeName="transform" type="rotate" values="0 35 35; 2 35 35; 0 35 35; -2 35 35; 0 35 35" dur="6s" repeatCount="indefinite"/>
+          </svg>
+        </div>
+        <div class="component-name">Plasma</div>
+        <div class="component-desc">Parte líquida — composta por água, proteínas e nutrientes</div>
+      </div>
+
+      <div class="component-card anim-item">
+        <div class="component-icon">
+          <svg viewBox="0 0 70 70">
+            <ellipse cx="35" cy="35" rx="28" ry="14" fill="none" stroke="#C4243B" stroke-width="1.5" opacity="0.6"/>
+            <ellipse cx="35" cy="35" rx="28" ry="14" fill="#9B1B30" opacity="0.3"/>
+            <ellipse cx="35" cy="35" rx="12" ry="6" fill="#6B0F20" opacity="0.4"/>
+            <animateTransform attributeName="transform" type="rotate" values="0 35 35; 360 35 35" dur="20s" repeatCount="indefinite"/>
+          </svg>
+        </div>
+        <div class="component-name">Hemácias</div>
+        <div class="component-desc">Glóbulos vermelhos — transportam oxigênio aos tecidos</div>
+      </div>
+
+      <div class="component-card anim-item">
+        <div class="component-icon">
+          <svg viewBox="0 0 70 70">
+            <circle cx="35" cy="35" r="22" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+            <path d="M28 28 Q35 22 40 28 Q46 34 40 40 Q34 46 28 40 Q22 34 28 28Z" fill="#7B6BA0" opacity="0.5"/>
+            <circle cx="35" cy="35" r="22" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-dasharray="3,3">
+              <animateTransform attributeName="transform" type="rotate" values="0 35 35; 360 35 35" dur="15s" repeatCount="indefinite"/>
+            </circle>
+          </svg>
+        </div>
+        <div class="component-name">Leucócitos</div>
+        <div class="component-desc">Glóbulos brancos — defendem o organismo contra infecções</div>
+      </div>
+
+      <div class="component-card anim-item">
+        <div class="component-icon">
+          <svg viewBox="0 0 70 70">
+            <circle cx="25" cy="35" r="8" fill="#E8B84B" opacity="0.4">
+              <animate attributeName="r" values="8;9;7;8" dur="3s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="40" cy="28" r="6" fill="#E8B84B" opacity="0.35">
+              <animate attributeName="r" values="6;7;5;6" dur="2.5s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="45" cy="42" r="7" fill="#E8B84B" opacity="0.38">
+              <animate attributeName="r" values="7;6;8;7" dur="3.5s" repeatCount="indefinite"/>
+            </circle>
+          </svg>
+        </div>
+        <div class="component-name">Plaquetas</div>
+        <div class="component-desc">Fragmentos celulares — atuam na coagulação sanguínea</div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <img src="https://images.seeklogo.com/logo-png/47/2/uninassau-logo-png_seeklogo-475645.png" alt="UNINASSAU" class="footer-logo">
+      <span class="footer-ref">Histologia Básica — Junqueira & Carneiro, 13ª ed.</span>
+      <span class="footer-page">4 / 12</span>
+    </div>
+  </div>
+
+  <!-- ========== SLIDE 4 — PLASMA ========== -->
+  <div class="slide" data-slide="4">
+    <span class="speaker-tag">Jennifer</span>
+    <h2 class="slide-title anim-item">Plasma</h2>
+
+    <div class="content-wrapper">
+      <div class="content-column">
+        <div class="glass-card anim-item">
+          <div class="card-title">O que é?</div>
+          <ul class="card-list">
+            <li>Parte <span class="highlight">líquida do sangue</span> (~55% do volume total)</li>
+            <li>Composto principalmente por <span class="highlight">água (90%)</span></li>
+            <li>Contém proteínas, sais minerais, glicose e lipídios</li>
+          </ul>
+        </div>
+        <div class="glass-card anim-item">
+          <div class="card-title">Funções</div>
+          <ul class="card-list">
+            <li>Transportar <span class="highlight-red">nutrientes</span> para as células</li>
+            <li>Levar <span class="highlight-red">hormônios</span> até os órgãos-alvo</li>
+            <li>Transportar <span class="highlight-red">resíduos metabólicos</span> para excreção</li>
+            <li>Manter a pressão osmótica do sangue</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="cell-scene anim-item">
+        <svg viewBox="0 0 400 360" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="plasmaFluid" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#E8B84B" stop-opacity="0.05"/>
+              <stop offset="50%" stop-color="#E8B84B" stop-opacity="0.15"/>
+              <stop offset="100%" stop-color="#E8B84B" stop-opacity="0.05"/>
+            </linearGradient>
+          </defs>
+
+          <!-- Test tube / container -->
+          <rect x="120" y="30" width="160" height="300" rx="80" fill="url(#plasmaFluid)" stroke="rgba(232,184,75,0.25)" stroke-width="1.5"/>
+
+          <!-- Plasma wave animation -->
+          <path d="M120 160 Q160 150 200 160 Q240 170 280 160" stroke="#E8B84B" stroke-width="1" fill="none" opacity="0.3">
+            <animate attributeName="d" dur="4s" repeatCount="indefinite" values="
+              M120 160 Q160 150 200 160 Q240 170 280 160;
+              M120 165 Q160 175 200 165 Q240 155 280 165;
+              M120 160 Q160 150 200 160 Q240 170 280 160
+            "/>
+          </path>
+
+          <!-- Floating proteins -->
+          <g opacity="0.5">
+            <circle cx="170" cy="100" r="5" fill="#E8B84B" opacity="0.3">
+              <animate attributeName="cy" values="100;90;110;100" dur="5s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="220" cy="130" r="4" fill="#E8B84B" opacity="0.25">
+              <animate attributeName="cy" values="130;120;140;130" dur="4s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="190" cy="200" r="6" fill="#E8B84B" opacity="0.2">
+              <animate attributeName="cy" values="200;185;210;200" dur="6s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="210" cy="250" r="3" fill="#E8B84B" opacity="0.3">
+              <animate attributeName="cy" values="250;240;260;250" dur="3.5s" repeatCount="indefinite"/>
+            </circle>
+
+            <!-- Protein molecules -->
+            <path d="M155 180 Q160 170 165 180 Q170 190 175 180" stroke="#E8B84B" stroke-width="1.5" fill="none" opacity="0.4">
+              <animateTransform attributeName="transform" type="translate" values="0,0; 5,-8; 0,0" dur="7s" repeatCount="indefinite"/>
+            </path>
+            <path d="M225 220 Q230 210 235 220 Q240 230 245 220" stroke="#E8B84B" stroke-width="1.5" fill="none" opacity="0.35">
+              <animateTransform attributeName="transform" type="translate" values="0,0; -5,6; 0,0" dur="5s" repeatCount="indefinite"/>
+            </path>
+          </g>
+
+          <!-- Labels -->
+          <text x="200" y="60" text-anchor="middle" font-size="11" fill="#E8B84B" font-weight="700" font-family="Montserrat" letter-spacing="2">PLASMA</text>
+          <text x="200" y="78" text-anchor="middle" font-size="9" fill="#A09A98" font-family="Montserrat">~55% do sangue</text>
+
+          <!-- Composition bar -->
+          <rect x="90" y="345" width="220" height="8" rx="4" fill="rgba(255,255,255,0.05)"/>
+          <rect x="90" y="345" width="198" height="8" rx="4" fill="rgba(232,184,75,0.2)"/>
+          <text x="90" y="340" font-size="8" fill="#A09A98" font-family="Montserrat">Água 90%</text>
+          <text x="290" y="340" font-size="8" fill="#A09A98" font-family="Montserrat" text-anchor="end">Proteínas 10%</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <img src="https://images.seeklogo.com/logo-png/47/2/uninassau-logo-png_seeklogo-475645.png" alt="UNINASSAU" class="footer-logo">
+      <span class="footer-ref">Histologia Básica — Junqueira & Carneiro, 13ª ed.</span>
+      <span class="footer-page">5 / 12</span>
+    </div>
+  </div>
+
+  <!-- ========== SLIDE 5 — HEMÁCIAS ========== -->
+  <div class="slide" data-slide="5">
+    <span class="speaker-tag">Yasmin</span>
+    <h2 class="slide-title anim-item">Hemácias</h2>
+
+    <div class="content-wrapper">
+      <div class="content-column">
+        <div class="glass-card anim-item">
+          <div class="card-title">Também chamadas de</div>
+          <p class="card-text"><span class="highlight">Glóbulos vermelhos</span> ou <span class="highlight">eritrócitos</span></p>
+        </div>
+        <div class="glass-card anim-item">
+          <div class="card-title">Função</div>
+          <ul class="card-list">
+            <li>Transportar <span class="highlight-red">oxigênio (O₂)</span> dos pulmões para os tecidos</li>
+            <li>Transportar parte do <span class="highlight-red">gás carbônico (CO₂)</span> de volta</li>
+          </ul>
+        </div>
+        <div class="glass-card anim-item">
+          <div class="card-title">Características</div>
+          <ul class="card-list">
+            <li>Formato de <span class="highlight">disco bicôncavo</span></li>
+            <li>Possuem <span class="highlight">hemoglobina</span> — proteína que se liga ao O₂</li>
+            <li>São <span class="highlight">anucleadas</span> em mamíferos</li>
+          </ul>
+        </div>
+        <div class="curiosity-box anim-item">
+          <strong>Curiosidade:</strong> A hemoglobina é responsável por dar a <strong>cor vermelha</strong> ao sangue. Cada hemácia contém cerca de 270 milhões de moléculas de hemoglobina!
+        </div>
+      </div>
+
+      <div class="cell-scene anim-item">
+        <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="rbcDetail" cx="50%" cy="40%" r="50%">
+              <stop offset="0%" stop-color="#E85060"/>
+              <stop offset="30%" stop-color="#D44050"/>
+              <stop offset="60%" stop-color="#9B1B30"/>
+              <stop offset="100%" stop-color="#6B0F20"/>
+            </radialGradient>
+            <radialGradient id="rbcCenter" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#4A0A18"/>
+              <stop offset="100%" stop-color="#6B0F20" stop-opacity="0.6"/>
+            </radialGradient>
+            <filter id="rbcShadow">
+              <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#9B1B30" flood-opacity="0.3"/>
+            </filter>
+          </defs>
+
+          <!-- Main large RBC -->
+          <g filter="url(#rbcShadow)">
+            <ellipse cx="200" cy="180" rx="110" ry="55" fill="url(#rbcDetail)">
+              <animate attributeName="ry" values="55;50;55;58;55" dur="4s" repeatCount="indefinite"/>
+            </ellipse>
+            <!-- Biconcave center -->
+            <ellipse cx="200" cy="180" rx="50" ry="25" fill="url(#rbcCenter)" opacity="0.5">
+              <animate attributeName="ry" values="25;22;25;27;25" dur="4s" repeatCount="indefinite"/>
+            </ellipse>
+            <!-- Rim highlight -->
+            <ellipse cx="200" cy="170" rx="90" ry="35" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1.5"/>
+            <!-- Top shine -->
+            <ellipse cx="170" cy="165" rx="30" ry="12" fill="rgba(255,255,255,0.07)" transform="rotate(-10,170,165)"/>
+          </g>
+
+          <!-- Smaller RBCs floating -->
+          <g opacity="0.5">
+            <ellipse cx="80" cy="300" rx="40" ry="18" fill="#9B1B30">
+              <animateTransform attributeName="transform" type="translate" values="0,0; 10,-5; 0,0" dur="5s" repeatCount="indefinite"/>
+            </ellipse>
+            <ellipse cx="80" cy="300" rx="16" ry="7" fill="#6B0F20" opacity="0.5">
+              <animateTransform attributeName="transform" type="translate" values="0,0; 10,-5; 0,0" dur="5s" repeatCount="indefinite"/>
+            </ellipse>
+          </g>
+
+          <g opacity="0.4">
+            <ellipse cx="330" cy="320" rx="35" ry="16" fill="#9B1B30">
+              <animateTransform attributeName="transform" type="translate" values="0,0; -8,6; 0,0" dur="6s" repeatCount="indefinite"/>
+            </ellipse>
+            <ellipse cx="330" cy="320" rx="14" ry="6" fill="#6B0F20" opacity="0.5">
+              <animateTransform attributeName="transform" type="translate" values="0,0; -8,6; 0,0" dur="6s" repeatCount="indefinite"/>
+            </ellipse>
+          </g>
+
+          <!-- O2 molecules -->
+          <g>
+            <text x="300" y="130" font-size="16" fill="#4BAEE8" font-weight="700" font-family="Montserrat" opacity="0.7">O₂</text>
+            <animateTransform attributeName="transform" type="translate" values="0,0; -15,8; -30,0; -15,-8; 0,0" dur="5s" repeatCount="indefinite"/>
+          </g>
+          <g>
+            <text x="90" y="120" font-size="14" fill="#4BAEE8" font-weight="700" font-family="Montserrat" opacity="0.5">O₂</text>
+            <animateTransform attributeName="transform" type="translate" values="0,0; 10,5; 20,0; 10,-5; 0,0" dur="6s" repeatCount="indefinite"/>
+          </g>
+
+          <!-- Hemoglobin label -->
+          <text x="200" y="260" text-anchor="middle" font-size="10" fill="#E85060" font-weight="600" font-family="Montserrat" letter-spacing="2">DISCO BICÔNCAVO</text>
+          
+          <!-- Dimension arrows -->
+          <line x1="85" y1="180" x2="85" y2="130" stroke="rgba(255,255,255,0.15)" stroke-width="1" marker-end="none"/>
+          <line x1="85" y1="180" x2="85" y2="230" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+          <text x="70" y="185" font-size="8" fill="#A09A98" font-family="Montserrat" text-anchor="middle" transform="rotate(-90,70,185)">~7μm</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <img src="https://images.seeklogo.com/logo-png/47/2/uninassau-logo-png_seeklogo-475645.png" alt="UNINASSAU" class="footer-logo">
+      <span class="footer-ref">Histologia Básica — Junqueira & Carneiro, 13ª ed.</span>
+      <span class="footer-page">6 / 12</span>
+    </div>
+  </div>
+
+  <!-- ========== SLIDE 6 — LEUCÓCITOS ========== -->
+  <div class="slide" data-slide="6">
+    <span class="speaker-tag">Yasmin</span>
+    <h2 class="slide-title anim-item">Leucócitos</h2>
+
+    <div class="content-wrapper">
+      <div class="content-column">
+        <div class="glass-card anim-item">
+          <div class="card-title">Também chamados de</div>
+          <p class="card-text"><span class="highlight">Glóbulos brancos</span></p>
+        </div>
+        <div class="glass-card anim-item">
+          <div class="card-title">Função</div>
+          <ul class="card-list">
+            <li><span class="highlight-red">Defesa do organismo</span> contra agentes invasores</li>
+            <li>Combatem bactérias, vírus, parasitas e fungos</li>
+            <li>Participam de respostas inflamatórias e imunológicas</li>
+          </ul>
+        </div>
+        <div class="glass-card anim-item">
+          <div class="card-title">Tipos Principais</div>
+          <ul class="card-list">
+            <li><span class="highlight">Neutrófilos</span> — fagocitose de bactérias</li>
+            <li><span class="highlight">Linfócitos</span> — resposta imune específica</li>
+            <li><span class="highlight">Monócitos</span> — transformam-se em macrófagos</li>
+            <li><span class="highlight">Eosinófilos</span> — combatem parasitas</li>
+            <li><span class="highlight">Basófilos</span> — reações alérgicas</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="cell-scene anim-item">
+        <svg viewBox="0 0 400 420" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="wbcBody" cx="45%" cy="40%" r="55%">
+              <stop offset="0%" stop-color="#F5F0EB"/>
+              <stop offset="40%" stop-color="#E0DCD6"/>
+              <stop offset="80%" stop-color="#C4BFB8"/>
+              <stop offset="100%" stop-color="#A09A98"/>
+            </radialGradient>
+            <radialGradient id="nucleusGrad" cx="45%" cy="40%" r="50%">
+              <stop offset="0%" stop-color="#9B7BC4"/>
+              <stop offset="60%" stop-color="#6B4BA0"/>
+              <stop offset="100%" stop-color="#4A2878"/>
+            </radialGradient>
+            <filter id="wbcGlow">
+              <feDropShadow dx="0" dy="3" stdDeviation="6" flood-color="#fff" flood-opacity="0.1"/>
+            </filter>
+          </defs>
+
+          <!-- Large neutrophil -->
+          <g filter="url(#wbcGlow)">
+            <circle cx="200" cy="160" r="80" fill="url(#wbcBody)" opacity="0.9">
+              <animate attributeName="r" values="80;83;78;81;80" dur="5s" repeatCount="indefinite"/>
+            </circle>
+            <!-- Pseudopods -->
+            <circle cx="130" cy="140" r="20" fill="#E0DCD6" opacity="0.5">
+              <animate attributeName="cx" values="130;125;135;130" dur="4s" repeatCount="indefinite"/>
+              <animate attributeName="r" values="20;24;18;20" dur="4s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="270" cy="170" r="18" fill="#E0DCD6" opacity="0.4">
+              <animate attributeName="cx" values="270;278;265;270" dur="5s" repeatCount="indefinite"/>
+              <animate attributeName="r" values="18;22;16;18" dur="5s" repeatCount="indefinite"/>
+            </circle>
+            <!-- Multi-lobed nucleus (neutrophil) -->
+            <circle cx="175" cy="145" r="22" fill="url(#nucleusGrad)" opacity="0.7">
+              <animate attributeName="cx" values="175;178;172;175" dur="6s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="205" cy="155" r="20" fill="url(#nucleusGrad)" opacity="0.65">
+              <animate attributeName="cy" values="155;158;152;155" dur="5s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="225" cy="145" r="18" fill="url(#nucleusGrad)" opacity="0.6">
+              <animate attributeName="cx" values="225;228;222;225" dur="7s" repeatCount="indefinite"/>
+            </circle>
+            <!-- Connecting bridges -->
+            <line x1="195" y1="148" x2="207" y2="152" stroke="#6B4BA0" stroke-width="4" opacity="0.4"/>
+            <line x1="222" y1="150" x2="210" y2="155" stroke="#6B4BA0" stroke-width="3" opacity="0.35"/>
+            
+            <!-- Granules -->
+            <circle cx="170" cy="175" r="3" fill="#C4BFB8" opacity="0.4"/>
+            <circle cx="190" cy="180" r="2.5" fill="#C4BFB8" opacity="0.35"/>
+            <circle cx="215" cy="178" r="2" fill="#C4BFB8" opacity="0.3"/>
+            <circle cx="230" cy="170" r="3" fill="#C4BFB8" opacity="0.4"/>
+          </g>
+
+          <!-- Label -->
+          <text x="200" y="270" text-anchor="middle" font-size="11" fill="#A09A98" font-weight="600" font-family="Montserrat" letter-spacing="2">NEUTRÓFILO</text>
+          <text x="200" y="286" text-anchor="middle" font-size="9" fill="#6B4BA0" font-family="Montserrat">Núcleo multilobulado</text>
+
+          <!-- Bacteria being engulfed -->
+          <g opacity="0.5">
+            <ellipse cx="130" cy="130" rx="8" ry="4" fill="#4BAE6B" transform="rotate(30,130,130)">
+              <animateTransform attributeName="transform" type="translate" values="0,0; 10,5; 15,8" dur="3s" fill="freeze" repeatCount="indefinite"/>
+              <animate attributeName="opacity" values="0.5;0.5;0" dur="3s" repeatCount="indefinite"/>
+            </ellipse>
+            <text x="100" y="115" font-size="8" fill="#4BAE6B" font-family="Montserrat" opacity="0.5">bactéria</text>
+          </g>
+
+          <!-- Small lymphocyte -->
+          <g transform="translate(80, 340)">
+            <circle cx="0" cy="0" r="28" fill="url(#wbcBody)" opacity="0.6">
+              <animate attributeName="r" values="28;30;27;28" dur="4s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="-2" cy="-3" r="20" fill="url(#nucleusGrad)" opacity="0.5"/>
+            <text x="0" y="42" text-anchor="middle" font-size="9" fill="#A09A98" font-family="Montserrat">Linfócito</text>
+          </g>
+
+          <!-- Small eosinophil -->
+          <g transform="translate(320, 350)">
+            <circle cx="0" cy="0" r="25" fill="url(#wbcBody)" opacity="0.5">
+              <animate attributeName="r" values="25;27;24;25" dur="5s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="-5" cy="-2" r="12" fill="#C46B8A" opacity="0.4"/>
+            <circle cx="6" cy="2" r="11" fill="#C46B8A" opacity="0.35"/>
+            <text x="0" y="38" text-anchor="middle" font-size="9" fill="#A09A98" font-family="Montserrat">Eosinófilo</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <img src="https://images.seeklogo.com/logo-png/47/2/uninassau-logo-png_seeklogo-475645.png" alt="UNINASSAU" class="footer-logo">
+      <span class="footer-ref">Histologia Básica — Junqueira & Carneiro, 13ª ed.</span>
+      <span class="footer-page">7 / 12</span>
+    </div>
+  </div>
+
+  <!-- ========== SLIDE 7 — PLAQUETAS ========== -->
+  <div class="slide" data-slide="7">
+    <span class="speaker-tag">Letícia</span>
+    <h2 class="slide-title anim-item">Plaquetas</h2>
+
+    <div class="content-wrapper">
+      <div class="content-column">
+        <div class="glass-card anim-item">
+          <div class="card-title">Função Principal</div>
+          <ul class="card-list">
+            <li><span class="highlight-red">Coagulação do sangue</span></li>
+            <li>Também chamadas de <span class="highlight">trombócitos</span></li>
+          </ul>
+        </div>
+        <div class="glass-card anim-item">
+          <div class="card-title">Importância</div>
+          <ul class="card-list">
+            <li>Evitam <span class="highlight">hemorragias</span></li>
+            <li>Ajudam na <span class="highlight">cicatrização</span> de ferimentos</li>
+            <li>Formam o tampão plaquetário inicial</li>
+          </ul>
+        </div>
+        <div class="curiosity-box anim-item">
+          <strong>Exemplo:</strong> Quando nos cortamos, as plaquetas são as primeiras a chegar ao local da lesão, aderindo umas às outras para formar o <strong>coágulo</strong> que estanca o sangramento.
+        </div>
+      </div>
+
+      <div class="cell-scene anim-item">
+        <svg viewBox="0 0 400 380" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="plateletGrad" cx="45%" cy="40%" r="50%">
+              <stop offset="0%" stop-color="#F5E6A0"/>
+              <stop offset="50%" stop-color="#E8B84B"/>
+              <stop offset="100%" stop-color="#C49030"/>
+            </radialGradient>
+            <filter id="plateletGlow">
+              <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#E8B84B" flood-opacity="0.3"/>
+            </filter>
+          </defs>
+
+          <!-- Wound representation -->
+          <rect x="30" y="60" width="340" height="260" rx="20" fill="rgba(155,27,48,0.04)" stroke="rgba(155,27,48,0.15)" stroke-width="1"/>
+
+          <!-- Blood vessel wall -->
+          <path d="M30 190 L170 190" stroke="#6B0F20" stroke-width="8" stroke-linecap="round" opacity="0.4"/>
+          <path d="M230 190 L370 190" stroke="#6B0F20" stroke-width="8" stroke-linecap="round" opacity="0.4"/>
+
+          <!-- Wound gap -->
+          <rect x="170" y="170" width="60" height="40" fill="rgba(155,27,48,0.15)" rx="4"/>
+          <text x="200" y="225" text-anchor="middle" font-size="8" fill="#C4243B" font-family="Montserrat" opacity="0.6">lesão</text>
+
+          <!-- Platelets aggregating at wound -->
+          <g filter="url(#plateletGlow)">
+            <!-- Arriving platelets -->
+            <ellipse cx="100" cy="150" rx="10" ry="7" fill="url(#plateletGrad)" opacity="0.6">
+              <animateTransform attributeName="transform" type="translate" values="0,0; 30,15; 70,25; 85,30" dur="4s" repeatCount="indefinite"/>
+              <animate attributeName="opacity" values="0.6;0.7;0.8;0.5" dur="4s" repeatCount="indefinite"/>
+            </ellipse>
+            <ellipse cx="120" cy="130" rx="8" ry="6" fill="url(#plateletGrad)" opacity="0.5">
+              <animateTransform attributeName="transform" type="translate" values="0,0; 20,20; 50,35; 65,42" dur="5s" repeatCount="indefinite"/>
+            </ellipse>
+            <ellipse cx="280" cy="145" rx="9" ry="7" fill="url(#plateletGrad)" opacity="0.55">
+              <animateTransform attributeName="transform" type="translate" values="0,0; -25,15; -55,28; -70,32" dur="4.5s" repeatCount="indefinite"/>
+            </ellipse>
+
+            <!-- Aggregated platelets forming clot -->
+            <ellipse cx="185" cy="185" rx="11" ry="8" fill="url(#plateletGrad)" opacity="0.8">
+              <animate attributeName="rx" values="11;12;10;11" dur="3s" repeatCount="indefinite"/>
+            </ellipse>
+            <ellipse cx="200" cy="180" rx="10" ry="7" fill="url(#plateletGrad)" opacity="0.75">
+              <animate attributeName="ry" values="7;8;6;7" dur="2.5s" repeatCount="indefinite"/>
+            </ellipse>
+            <ellipse cx="215" cy="185" rx="9" ry="7" fill="url(#plateletGrad)" opacity="0.78">
+              <animate attributeName="rx" values="9;10;8;9" dur="3.5s" repeatCount="indefinite"/>
+            </ellipse>
+            <ellipse cx="193" cy="195" rx="10" ry="6" fill="url(#plateletGrad)" opacity="0.7"/>
+            <ellipse cx="207" cy="195" rx="9" ry="6" fill="url(#plateletGrad)" opacity="0.72"/>
+          </g>
+
+          <!-- Fibrin network -->
+          <g opacity="0.25" stroke="#E8B84B" stroke-width="0.5" fill="none">
+            <path d="M175 178 L195 190 L220 182 L210 195 L190 198 L178 188Z">
+              <animate attributeName="opacity" values="0;0.3;0.5;0.3;0" dur="4s" repeatCount="indefinite"/>
+            </path>
+            <line x1="180" y1="183" x2="215" y2="192">
+              <animate attributeName="opacity" values="0;0.4;0;0.4;0" dur="3s" repeatCount="indefinite"/>
+            </line>
+            <line x1="190" y1="178" x2="205" y2="198">
+              <animate attributeName="opacity" values="0.2;0;0.3;0;0.2" dur="3.5s" repeatCount="indefinite"/>
+            </line>
+          </g>
+
+          <!-- Labels -->
+          <text x="200" y="100" text-anchor="middle" font-size="11" fill="#E8B84B" font-weight="700" font-family="Montserrat" letter-spacing="2">COAGULAÇÃO</text>
+
+          <!-- Process steps -->
+          <text x="80" y="290" font-size="8" fill="#A09A98" font-family="Montserrat">1. Lesão no vaso</text>
+          <text x="175" y="290" font-size="8" fill="#E8B84B" font-family="Montserrat">2. Agregação plaquetária</text>
+          <text x="290" y="290" font-size="8" fill="#C4243B" font-family="Montserrat">3. Coágulo formado</text>
+
+          <!-- Step arrows -->
+          <path d="M145 287 L165 287" stroke="#A09A98" stroke-width="1" fill="none" marker-end="none" opacity="0.4"/>
+          <path d="M268 287 L280 287" stroke="#A09A98" stroke-width="1" fill="none" opacity="0.4"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <img src="https://images.seeklogo.com/logo-png/47/2/uninassau-logo-png_seeklogo-475645.png" alt="UNINASSAU" class="footer-logo">
+      <span class="footer-ref">Histologia Básica — Junqueira & Carneiro, 13ª ed.</span>
+      <span class="footer-page">8 / 12</span>
+    </div>
+  </div>
+
+  <!-- ========== SLIDE 8 — VISÃO GERAL (TODOS OS COMPONENTES) ========== -->
+  <div class="slide" data-slide="8">
+    <span class="speaker-tag">Letícia</span>
+    <h2 class="slide-title anim-item">Visão Geral — Componentes no Sangue</h2>
+
+    <div class="overview-container anim-item">
+      <svg viewBox="0 0 900 400" xmlns="http://www.w3.org/2000/svg" style="width:100%; max-width:900px; filter: drop-shadow(0 0 20px rgba(155,27,48,0.1));">
+        <defs>
+          <linearGradient id="vesselWall" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#6B0F20" stop-opacity="0.4"/>
+            <stop offset="30%" stop-color="#6B0F20" stop-opacity="0.1"/>
+            <stop offset="70%" stop-color="#6B0F20" stop-opacity="0.1"/>
+            <stop offset="100%" stop-color="#6B0F20" stop-opacity="0.4"/>
+          </linearGradient>
+          <linearGradient id="plasmaFlow" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#E8B84B" stop-opacity="0.02"/>
+            <stop offset="50%" stop-color="#E8B84B" stop-opacity="0.08"/>
+            <stop offset="100%" stop-color="#E8B84B" stop-opacity="0.02"/>
+          </linearGradient>
+          <radialGradient id="rbcOv" cx="50%" cy="40%" r="50%">
+            <stop offset="0%" stop-color="#E85060"/>
+            <stop offset="60%" stop-color="#9B1B30"/>
+            <stop offset="100%" stop-color="#6B0F20"/>
+          </radialGradient>
+          <radialGradient id="wbcOv" cx="40%" cy="35%" r="55%">
+            <stop offset="0%" stop-color="#F5F0EB"/>
+            <stop offset="60%" stop-color="#D4CFC8"/>
+            <stop offset="100%" stop-color="#A09A98"/>
+          </radialGradient>
+        </defs>
+
+        <!-- Blood vessel -->
+        <rect x="20" y="30" width="860" height="280" rx="140" fill="url(#plasmaFlow)" stroke="url(#vesselWall)" stroke-width="3"/>
+
+        <!-- Inner wall lines -->
+        <rect x="35" y="45" width="830" height="250" rx="125" fill="none" stroke="rgba(107,15,32,0.1)" stroke-width="1" stroke-dasharray="5,5"/>
+
+        <!-- PLASMA label & flow -->
+        <text x="450" y="320" text-anchor="middle" font-size="12" fill="#E8B84B" font-weight="700" font-family="Montserrat" letter-spacing="3" opacity="0.7">PLASMA SANGUÍNEO</text>
+        
+        <!-- Flow lines -->
+        <g opacity="0.15" stroke="#E8B84B" stroke-width="0.5">
+          <path d="M60 170 C200 165 300 175 450 170 C600 165 700 175 840 170">
+            <animate attributeName="d" dur="6s" repeatCount="indefinite" values="
+              M60 170 C200 165 300 175 450 170 C600 165 700 175 840 170;
+              M60 172 C200 178 300 168 450 172 C600 178 700 168 840 172;
+              M60 170 C200 165 300 175 450 170 C600 165 700 175 840 170
+            "/>
+          </path>
+        </g>
+
+        <!-- Red blood cells -->
+        <g>
+          <ellipse cx="150" cy="140" rx="36" ry="17" fill="url(#rbcOv)" opacity="0.85">
+            <animateTransform attributeName="transform" type="translate" values="0,0; 25,-3; 50,0; 25,3; 0,0" dur="8s" repeatCount="indefinite"/>
+          </ellipse>
+          <ellipse cx="150" cy="140" rx="15" ry="7" fill="#6B0F20" opacity="0.4">
+            <animateTransform attributeName="transform" type="translate" values="0,0; 25,-3; 50,0; 25,3; 0,0" dur="8s" repeatCount="indefinite"/>
+          </ellipse>
+        </g>
+        <g>
+          <ellipse cx="320" cy="200" rx="34" ry="16" fill="url(#rbcOv)" opacity="0.75">
+            <animateTransform attributeName="transform" type="translate" values="0,0; 20,4; 40,0; 20,-4; 0,0" dur="9s" repeatCount="indefinite"/>
+          </ellipse>
+          <ellipse cx="320" cy="200" rx="14" ry="6" fill="#6B0F20" opacity="0.35">
+            <animateTransform attributeName="transform" type="translate" values="0,0; 20,4; 40,0; 20,-4; 0,0" dur="9s" repeatCount="indefinite"/>
+          </ellipse>
+        </g>
+        <g>
+          <ellipse cx="550" cy="150" rx="38" ry="18" fill="url(#rbcOv)" opacity="0.8">
+            <animateTransform attributeName="transform" type="translate" values="0,0; 15,-5; 35,0; 15,5; 0,0" dur="7s" repeatCount="indefinite"/>
+          </ellipse>
+          <ellipse cx="550" cy="150" rx="16" ry="7" fill="#6B0F20" opacity="0.38">
+            <animateTransform attributeName="transform" type="translate" values="0,0; 15,-5; 35,0; 15,5; 0,0" dur="7s" repeatCount="indefinite"/>
+          </ellipse>
+        </g>
+        <g>
+          <ellipse cx="720" cy="210" rx="32" ry="15" fill="url(#rbcOv)" opacity="0.7">
+            <animateTransform attributeName="transform" type="translate" values="0,0; 18,3; 36,0; 18,-3; 0,0" dur="10s" repeatCount="indefinite"/>
+          </ellipse>
+          <ellipse cx="720" cy="210" rx="13" ry="6" fill="#6B0F20" opacity="0.3">
+            <animateTransform attributeName="transform" type="translate" values="0,0; 18,3; 36,0; 18,-3; 0,0" dur="10s" repeatCount="indefinite"/>
+          </ellipse>
+        </g>
+        <g>
+          <ellipse cx="450" cy="240" rx="30" ry="14" fill="url(#rbcOv)" opacity="0.65">
+            <animateTransform attributeName="transform" type="translate" values="0,0; -12,5; -25,0; -12,-5; 0,0" dur="8.5s" repeatCount="indefinite"/>
+          </ellipse>
+          <ellipse cx="450" cy="240" rx="12" ry="5" fill="#6B0F20" opacity="0.3">
+            <animateTransform attributeName="transform" type="translate" values="0,0; -12,5; -25,0; -12,-5; 0,0" dur="8.5s" repeatCount="indefinite"/>
+          </ellipse>
+        </g>
+
+        <!-- White blood cell -->
+        <g>
+          <circle cx="650" cy="170" r="26" fill="url(#wbcOv)" opacity="0.8">
+            <animateTransform attributeName="transform" type="translate" values="0,0; -8,6; -16,0; -8,-6; 0,0" dur="11s" repeatCount="indefinite"/>
+            <animate attributeName="r" values="26;28;25;27;26" dur="6s" repeatCount="indefinite"/>
+          </circle>
+          <path d="M638 163 Q648 155 656 163 Q662 172 654 177 Q646 182 638 175 Q632 168 638 163Z" fill="#7B6BA0" opacity="0.5">
+            <animateTransform attributeName="transform" type="translate" values="0,0; -8,6; -16,0; -8,-6; 0,0" dur="11s" repeatCount="indefinite"/>
+          </path>
+        </g>
+
+        <!-- Platelets -->
+        <g>
+          <ellipse cx="250" cy="165" rx="8" ry="5" fill="#E8B84B" opacity="0.6">
+            <animateTransform attributeName="transform" type="translate" values="0,0; 10,-3; 20,0; 10,3; 0,0" dur="5s" repeatCount="indefinite"/>
+          </ellipse>
+          <ellipse cx="480" cy="180" rx="7" ry="4" fill="#E8B84B" opacity="0.5">
+            <animateTransform attributeName="transform" type="translate" values="0,0; -8,4; -16,0; -8,-4; 0,0" dur="4.5s" repeatCount="indefinite"/>
+          </ellipse>
+          <ellipse cx="800" cy="160" rx="6" ry="4" fill="#E8B84B" opacity="0.55">
+            <animateTransform attributeName="transform" type="translate" values="0,0; 6,-2; 12,0; 6,2; 0,0" dur="6s" repeatCount="indefinite"/>
+          </ellipse>
+          <ellipse cx="380" cy="120" rx="7" ry="5" fill="#E8B84B" opacity="0.45">
+            <animateTransform attributeName="transform" type="translate" values="0,0; 12,2; 24,0; 12,-2; 0,0" dur="5.5s" repeatCount="indefinite"/>
+          </ellipse>
+        </g>
+
+        <!-- Legend -->
+        <g transform="translate(100, 355)">
+          <ellipse cx="0" cy="0" rx="12" ry="6" fill="url(#rbcOv)" opacity="0.8"/>
+          <text x="18" y="4" font-size="10" fill="#C4243B" font-family="Montserrat" font-weight="600">Hemácias</text>
+        </g>
+        <g transform="translate(280, 355)">
+          <circle cx="0" cy="0" r="8" fill="url(#wbcOv)" opacity="0.7"/>
+          <text x="14" y="4" font-size="10" fill="#A09A98" font-family="Montserrat" font-weight="600">Leucócitos</text>
+        </g>
+        <g transform="translate(470, 355)">
+          <ellipse cx="0" cy="0" rx="6" ry="4" fill="#E8B84B" opacity="0.7"/>
+          <text x="12" y="4" font-size="10" fill="#E8B84B" font-family="Montserrat" font-weight="600">Plaquetas</text>
+        </g>
+        <g transform="translate(640, 355)">
+          <rect x="-8" y="-5" width="16" height="10" rx="3" fill="rgba(232,184,75,0.12)" stroke="rgba(232,184,75,0.3)" stroke-width="0.5"/>
+          <text x="14" y="4" font-size="10" fill="#E8B84B" font-family="Montserrat" font-weight="600" opacity="0.7">Plasma</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="slide-footer">
+      <img src="https://images.seeklogo.com/logo-png/47/2/uninassau-logo-png_seeklogo-475645.png" alt="UNINASSAU" class="footer-logo">
+      <span class="footer-ref">Histologia Básica — Junqueira & Carneiro, 13ª ed.</span>
+      <span class="footer-page">9 / 12</span>
+    </div>
+  </div>
+
+  <!-- ========== SLIDE 9 — DOENÇAS ========== -->
+  <div class="slide" data-slide="9">
+    <span class="speaker-tag">Letícia</span>
+    <h2 class="slide-title anim-item">Doenças Relacionadas ao Sangue</h2>
+
+    <div class="disease-grid">
+      <div class="disease-card anim-item">
+        <div class="disease-icon">
+          <svg width="50" height="50" viewBox="0 0 50 50">
+            <ellipse cx="25" cy="25" rx="20" ry="10" fill="none" stroke="#C4243B" stroke-width="1.5" opacity="0.5" stroke-dasharray="3,2"/>
+            <ellipse cx="25" cy="25" rx="20" ry="10" fill="#9B1B30" opacity="0.15"/>
+            <text x="25" y="28" text-anchor="middle" font-size="8" fill="#C4243B" font-family="Montserrat" opacity="0.6">↓</text>
+          </svg>
+        </div>
+        <div class="disease-name">Anemia</div>
+        <div class="disease-desc">Redução de hemácias ou hemoglobina, causando fadiga e palidez. Pode ser por deficiência de ferro ou vitaminas.</div>
+      </div>
+
+      <div class="disease-card anim-item">
+        <div class="disease-icon">
+          <svg width="50" height="50" viewBox="0 0 50 50">
+            <circle cx="25" cy="25" r="18" fill="none" stroke="#A09A98" stroke-width="1.5" opacity="0.5"/>
+            <circle cx="20" cy="20" r="5" fill="#7B6BA0" opacity="0.4"/>
+            <circle cx="30" cy="22" r="4" fill="#7B6BA0" opacity="0.35"/>
+            <circle cx="25" cy="32" r="4.5" fill="#7B6BA0" opacity="0.3"/>
+            <circle cx="15" cy="30" r="3" fill="#7B6BA0" opacity="0.25"/>
+            <circle cx="33" cy="30" r="3.5" fill="#7B6BA0" opacity="0.28"/>
+          </svg>
+        </div>
+        <div class="disease-name">Leucemia</div>
+        <div class="disease-desc">Câncer dos leucócitos com produção anormal e descontrolada de glóbulos brancos na medula óssea.</div>
+      </div>
+
+      <div class="disease-card anim-item">
+        <div class="disease-icon">
+          <svg width="50" height="50" viewBox="0 0 50 50">
+            <path d="M15 35 L25 15 L35 35" fill="none" stroke="#E8B84B" stroke-width="1.5" opacity="0.5"/>
+            <line x1="25" y1="22" x2="25" y2="28" stroke="#E8B84B" stroke-width="2" opacity="0.6"/>
+            <circle cx="25" cy="31" r="1" fill="#E8B84B" opacity="0.6"/>
+            <circle cx="18" cy="38" r="4" fill="#E8B84B" opacity="0.15"/>
+            <circle cx="32" cy="38" r="4" fill="#E8B84B" opacity="0.15"/>
+          </svg>
+        </div>
+        <div class="disease-name">Hemofilia</div>
+        <div class="disease-desc">Distúrbio genético que afeta a coagulação — o sangue demora muito para coagular, causando sangramentos prolongados.</div>
+      </div>
+    </div>
+
+    <div class="care-section">
+      <div class="care-item anim-item">
+        <div class="care-icon">🥗</div>
+        <div class="care-text">Alimentação saudável e rica em ferro</div>
+      </div>
+      <div class="care-item anim-item">
+        <div class="care-icon">🔬</div>
+        <div class="care-text">Exames de sangue regulares</div>
+      </div>
+      <div class="care-item anim-item">
+        <div class="care-icon">🩸</div>
+        <div class="care-text">Doação de sangue salva vidas</div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <img src="https://images.seeklogo.com/logo-png/47/2/uninassau-logo-png_seeklogo-475645.png" alt="UNINASSAU" class="footer-logo">
+      <span class="footer-ref">Histologia Básica — Junqueira & Carneiro, 13ª ed.</span>
+      <span class="footer-page">10 / 12</span>
+    </div>
+  </div>
+
+  <!-- ========== SLIDE 10 — REFERÊNCIA BIBLIOGRÁFICA ========== -->
+  <div class="slide" data-slide="10">
+    <h2 class="slide-title anim-item">Referência Bibliográfica</h2>
+
+    <div class="content-wrapper" style="align-items: center; max-width: 1000px;">
+      <!-- Book cover -->
+      <div class="anim-item" style="flex-shrink: 0; position: relative; z-index: 1;">
+        <div style="
+          width: 300px;
+          border-radius: 12px;
+          overflow: hidden;
+          box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(155,27,48,0.15), 0 0 0 1px rgba(255,255,255,0.05);
+          transform: perspective(800px) rotateY(-4deg);
+          transition: transform 0.5s ease;
+        " onmouseover="this.style.transform='perspective(800px) rotateY(0deg) scale(1.02)'" onmouseout="this.style.transform='perspective(800px) rotateY(-4deg)'">
+          <img src="capa-do-livro.png" alt="Histologia Básica — Junqueira &amp; Carneiro" style="width: 100%; display: block;">
+        </div>
+      </div>
+
+      <!-- Book info -->
+      <div class="content-column anim-item" style="position: relative; z-index: 1;">
+        <div class="glass-card" style="margin-bottom: 16px;">
+          <div class="card-title">Obra</div>
+          <p style="font-family: 'Lora', serif; font-size: 1.35rem; font-weight: 700; color: var(--text); line-height: 1.4; margin-bottom: 8px;">
+            Histologia Básica — Texto &amp; Atlas
+          </p>
+          <p style="font-size: 1rem; color: var(--text-muted); line-height: 1.5;">
+            Luiz Carlos Junqueira &amp; José Carneiro
+          </p>
+        </div>
+
+        <div class="glass-card" style="margin-bottom: 16px;">
+          <div class="card-title">Detalhes da Edição</div>
+          <ul class="card-list">
+            <li><span class="highlight">13ª edição</span></li>
+            <li>Editora Guanabara Koogan</li>
+            <li>Referência em Histologia nas universidades brasileiras</li>
+          </ul>
+        </div>
+
+        <div class="glass-card">
+          <div class="card-title">Conteúdo Consultado</div>
+          <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">Capítulo referente ao tecido sanguíneo — sangue e seus componentes celulares.</p>
+        </div>
+
+        <div style="margin-top: 18px; padding: 14px 20px; background: linear-gradient(135deg, rgba(232,184,75,0.06), rgba(155,27,48,0.06)); border: 1px solid rgba(232,184,75,0.15); border-radius: 10px;">
+          <p style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.6;">
+            <span style="color: var(--accent); font-weight: 600;">ABNT:</span>
+            JUNQUEIRA, L. C.; CARNEIRO, J. <em>Histologia Básica: Texto &amp; Atlas</em>. 13. ed. Rio de Janeiro: Guanabara Koogan, 2017.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <img src="https://images.seeklogo.com/logo-png/47/2/uninassau-logo-png_seeklogo-475645.png" alt="UNINASSAU" class="footer-logo">
+      <span class="footer-ref">Histologia Básica — Junqueira &amp; Carneiro, 13ª ed.</span>
+      <span class="footer-page">11 / 12</span>
+    </div>
+  </div>
+
+  <!-- ========== SLIDE 11 — CONCLUSÃO ========== -->
+  <div class="slide" data-slide="11">
+    <span class="speaker-tag">Jennifer</span>
+    <h2 class="slide-title anim-item">Conclusão</h2>
+
+    <div class="conclusion-points">
+      <div class="conclusion-item anim-item">
+        <div class="conclusion-number">01</div>
+        <div class="conclusion-text">O sangue é um tecido conjuntivo especializado <span class="highlight">essencial para a vida</span>, garantindo transporte, defesa e homeostase do organismo.</div>
+      </div>
+      <div class="conclusion-item anim-item">
+        <div class="conclusion-number">02</div>
+        <div class="conclusion-text">Cada componente — plasma, hemácias, leucócitos e plaquetas — possui uma <span class="highlight">função específica e indispensável</span> para o funcionamento do corpo.</div>
+      </div>
+      <div class="conclusion-item anim-item">
+        <div class="conclusion-number">03</div>
+        <div class="conclusion-text">Todos os componentes <span class="highlight">trabalham em conjunto</span> para manter o organismo saudável e protegido contra doenças.</div>
+      </div>
+    </div>
+
+    <div style="margin-top: 40px; text-align: center; position: relative; z-index: 1;" class="anim-item">
+      <p style="font-size: 0.85rem; color: var(--text-muted);">Cuidar do sangue é cuidar da vida.</p>
+    </div>
+
+    <div class="slide-footer">
+      <img src="https://images.seeklogo.com/logo-png/47/2/uninassau-logo-png_seeklogo-475645.png" alt="UNINASSAU" class="footer-logo">
+      <span class="footer-ref">Histologia Básica — Junqueira & Carneiro, 13ª ed.</span>
+      <span class="footer-page">12 / 12</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const progressBar = document.getElementById('progressBar');
+  const totalSlides = slides.length;
+  let currentSlide = 0;
+  let isTransitioning = false;
+
+  // Initialize particles on cover
+  function createParticles(containerId, count) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    for (let i = 0; i < count; i++) {
+      const p = document.createElement('div');
+      p.classList.add('particle');
+      const size = Math.random() * 4 + 1;
+      const colors = ['#9B1B30', '#C4243B', '#E8B84B', '#6B0F20'];
+      p.style.width = size + 'px';
+      p.style.height = size + 'px';
+      p.style.left = Math.random() * 100 + '%';
+      p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      p.style.animationDuration = (Math.random() * 15 + 10) + 's';
+      p.style.animationDelay = (Math.random() * 10) + 's';
+      container.appendChild(p);
+    }
+  }
+
+  createParticles('coverParticles', 30);
+
+  function updateProgress() {
+    const pct = ((currentSlide) / (totalSlides - 1)) * 100;
+    progressBar.style.width = pct + '%';
+  }
+
+  function goToSlide(index) {
+    if (isTransitioning || index < 0 || index >= totalSlides || index === currentSlide) return;
+    isTransitioning = true;
+
+    const prev = slides[currentSlide];
+    const next = slides[index];
+    const goingForward = index > currentSlide;
+    const overlay = document.getElementById('transitionOverlay');
+
+    // Reset animation items on next slide
+    next.querySelectorAll('.anim-item').forEach(el => {
+      el.style.animation = 'none';
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(20px)';
+    });
+
+    // Start overlay wipe
+    overlay.classList.remove('animate-forward', 'animate-backward');
+    void overlay.offsetWidth;
+    overlay.classList.add(goingForward ? 'animate-forward' : 'animate-backward');
+
+    // Animate previous slide out
+    prev.classList.remove('active');
+    prev.classList.add(goingForward ? 'slide-exit-forward' : 'slide-exit-backward');
+
+    // Small delay then bring in new slide
+    setTimeout(() => {
+      next.style.visibility = 'visible';
+      next.classList.add('active');
+      next.classList.add(goingForward ? 'slide-enter-forward' : 'slide-enter-backward');
+
+      // Trigger content animations
+      next.querySelectorAll('.anim-item').forEach(el => {
+        el.style.animation = '';
+      });
+    }, 200);
+
+    currentSlide = index;
+    updateProgress();
+
+    // Cleanup after all animations finish
+    setTimeout(() => {
+      prev.classList.remove('slide-exit-forward', 'slide-exit-backward');
+      prev.style.visibility = 'hidden';
+      prev.style.opacity = '';
+      prev.style.transform = '';
+      prev.style.filter = '';
+
+      next.classList.remove('slide-enter-forward', 'slide-enter-backward');
+      next.style.filter = '';
+
+      overlay.classList.remove('animate-forward', 'animate-backward');
+
+      isTransitioning = false;
+    }, 1550);
+  }
+
+  window.nextSlide = function() { goToSlide(currentSlide + 1); };
+  window.prevSlide = function() { goToSlide(currentSlide - 1); };
+
+  // Keyboard nav
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown') {
+      e.preventDefault();
+      nextSlide();
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp') {
+      e.preventDefault();
+      prevSlide();
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      goToSlide(0);
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      goToSlide(totalSlides - 1);
+    }
+  });
+
+  // Touch / swipe support
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.addEventListener('touchstart', function(e) {
+    touchStartX = e.changedTouches[0].screenX;
+    touchStartY = e.changedTouches[0].screenY;
+  }, { passive: true });
+
+  document.addEventListener('touchend', function(e) {
+    const dx = e.changedTouches[0].screenX - touchStartX;
+    const dy = e.changedTouches[0].screenY - touchStartY;
+
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+      if (dx < 0) nextSlide();
+      else prevSlide();
+    }
+  }, { passive: true });
+
+  // Mouse wheel
+  let wheelCooldown = false;
+  document.addEventListener('wheel', function(e) {
+    if (wheelCooldown) return;
+    wheelCooldown = true;
+    if (e.deltaY > 0) nextSlide();
+    else prevSlide();
+    setTimeout(() => { wheelCooldown = false; }, 800);
+  }, { passive: true });
+
+  updateProgress();
+})();
+</script>
+</body>
+</html>

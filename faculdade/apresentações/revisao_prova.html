@@ -1,0 +1,1458 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revisão — Bases para Pesquisa Científica</title>
+    <style>
+        :root {
+            --primary: #1a5276;
+            --accent: #2e86c1;
+            --light: #d6eaf8;
+            --bg: #f8f9fa;
+            --card: #ffffff;
+            --text: #2c3e50;
+            --green: #27ae60;
+            --orange: #e67e22;
+            --red: #c0392b;
+            --purple: #8e44ad;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body { overflow-x: hidden; max-width: 100vw; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            padding: 1.4rem 1rem;
+            text-align: center;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,.2);
+        }
+
+        header h1 { font-size: 1.5rem; margin-bottom: .3rem; }
+        header p { font-size: .9rem; opacity: .9; }
+
+        nav {
+            background: var(--card);
+            padding: .8rem 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: .4rem;
+            justify-content: center;
+            border-bottom: 2px solid var(--light);
+            position: sticky;
+            top: 0;
+            z-index: 99;
+            box-shadow: 0 1px 6px rgba(0,0,0,.08);
+        }
+
+        nav a {
+            text-decoration: none;
+            background: var(--light);
+            color: var(--primary);
+            padding: .4rem .9rem;
+            border-radius: 20px;
+            font-size: .85rem;
+            font-weight: 600;
+            transition: .2s;
+        }
+
+        nav a:hover { background: var(--accent); color: #fff; }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 1.5rem; width: 100%; overflow-x: hidden; }
+
+        section {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,.06);
+            border-left: 5px solid var(--accent);
+            overflow-x: auto;
+            max-width: 100%;
+        }
+
+        section h2 {
+            color: var(--primary);
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            padding-bottom: .5rem;
+            border-bottom: 2px solid var(--light);
+        }
+
+        section h3 {
+            color: var(--accent);
+            margin: 1.2rem 0 .5rem;
+            font-size: 1.1rem;
+        }
+
+        section h4 {
+            color: var(--purple);
+            margin: .8rem 0 .3rem;
+            font-size: 1rem;
+        }
+
+        .highlight {
+            background: var(--light);
+            border-left: 4px solid var(--accent);
+            padding: .8rem 1rem;
+            margin: .8rem 0;
+            border-radius: 0 8px 8px 0;
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+
+        .highlight-green {
+            background: #eafaf1;
+            border-left: 4px solid var(--green);
+            padding: .8rem 1rem;
+            margin: .8rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .highlight-orange {
+            background: #fef5e7;
+            border-left: 4px solid var(--orange);
+            padding: .8rem 1rem;
+            margin: .8rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .highlight-red {
+            background: #fdedec;
+            border-left: 4px solid var(--red);
+            padding: .8rem 1rem;
+            margin: .8rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: .92rem;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 1rem 0;
+        }
+
+        .table-responsive table { margin: 0; }
+
+        th {
+            background: var(--primary);
+            color: #fff;
+            padding: .6rem .8rem;
+            text-align: left;
+        }
+
+        td {
+            padding: .5rem .8rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:nth-child(even) td { background: #f7f9fc; }
+        tr:hover td { background: var(--light); }
+
+        ul, ol { padding-left: 1.5rem; margin: .5rem 0; }
+        li { margin-bottom: .3rem; }
+
+        .badge {
+            display: inline-block;
+            padding: .15rem .6rem;
+            border-radius: 12px;
+            font-size: .78rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .badge-blue { background: var(--accent); }
+        .badge-green { background: var(--green); }
+        .badge-orange { background: var(--orange); }
+        .badge-purple { background: var(--purple); }
+        .badge-red { background: var(--red); }
+
+        .two-col {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+            gap: 1rem;
+            margin: .8rem 0;
+        }
+
+        .col-card {
+            background: #f7f9fc;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #e0e6ed;
+            overflow-x: auto;
+            min-width: 0;
+        }
+
+        .col-card h4 { margin-top: 0; }
+
+        .formula {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: .8rem 1.2rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            text-align: center;
+            margin: .8rem 0;
+            overflow-x: auto;
+            white-space: normal;
+            word-break: break-word;
+        }
+
+        .quiz {
+            background: #fef9e7;
+            border: 2px solid #f1c40f;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: .8rem 0;
+        }
+
+        .quiz summary {
+            cursor: pointer;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .quiz p { margin-top: .5rem; color: var(--green); font-weight: 600; }
+
+        .icon { margin-right: .3rem; }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #888;
+            font-size: .85rem;
+        }
+
+        /* ===== RESPONSIVE ===== */
+
+        /* Tablet */
+        @media (max-width: 768px) {
+            header { padding: 1.2rem .8rem; position: relative; }
+            header h1 { font-size: 1.25rem; }
+            header p { font-size: .82rem; }
+
+            nav {
+                position: relative;
+                top: auto;
+                padding: .6rem .8rem;
+                gap: .4rem;
+            }
+
+            nav a { font-size: .78rem; padding: .35rem .7rem; }
+
+            .container { padding: 1rem .6rem; }
+
+            section {
+                padding: 1.2rem 1rem;
+                border-radius: 8px;
+                margin-bottom: 1rem;
+            }
+
+            section h2 { font-size: 1.2rem; }
+            section h3 { font-size: 1rem; }
+
+            .two-col { grid-template-columns: 1fr; }
+
+            .formula { font-size: .85rem; padding: .6rem .8rem; word-break: break-all; }
+        }
+
+        /* Mobile */
+        @media (max-width: 480px) {
+            header { padding: 1rem .6rem; }
+            header h1 { font-size: 1.1rem; line-height: 1.4; }
+            header p { font-size: .75rem; }
+
+            nav {
+                padding: .5rem;
+                gap: .3rem;
+            }
+
+            nav a {
+                font-size: .72rem;
+                padding: .3rem .55rem;
+                border-radius: 14px;
+            }
+
+            .container { padding: .6rem .4rem; }
+
+            section {
+                padding: .9rem .7rem;
+                border-left-width: 3px;
+                border-radius: 6px;
+            }
+
+            section h2 { font-size: 1.05rem; }
+            section h3 { font-size: .95rem; }
+            section h4 { font-size: .9rem; }
+
+            .formula {
+                font-size: .75rem;
+                padding: .5rem .6rem;
+                word-break: break-all;
+                overflow-x: auto;
+            }
+
+            .badge { font-size: .68rem; padding: .1rem .45rem; }
+
+            .quiz summary { font-size: .88rem; line-height: 1.5; }
+
+            .col-card { padding: .7rem; }
+
+            .highlight, .highlight-green, .highlight-orange, .highlight-red {
+                padding: .6rem .7rem;
+                font-size: .9rem;
+            }
+
+            ul, ol { padding-left: 1.2rem; }
+        }
+
+        /* Tables: horizontal scroll on small screens */
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 1rem 0;
+        }
+
+        .table-wrap table {
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            table { font-size: .82rem; }
+            th { padding: .45rem .5rem; }
+            td { padding: .4rem .5rem; }
+        }
+
+        /* Print styles */
+        @media print {
+            header, nav { position: static; }
+            section { break-inside: avoid; box-shadow: none; border: 1px solid #ccc; }
+            .table-wrap { overflow: visible; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>📋 Revisão — Bases para Pesquisa Científica e Bioestatística</h1>
+    <p>Profa. Dra. Marina de Paula Almeida · Odontologia · UNINASSAU</p>
+</header>
+
+<nav>
+    <a href="#conceitos">1. Conceitos Básicos</a>
+    <a href="#variaveis">2. Tipos de Variáveis</a>
+    <a href="#medidas">3. Medidas</a>
+    <a href="#amostra">4. Amostra e Amostragem</a>
+    <a href="#distribuicao">5. Distribuição de Frequência</a>
+    <a href="#aritmetica">6. Aritmética</a>
+    <a href="#probabilidade">7. Probabilidade</a>
+    <a href="#exercicios">Exercícios</a>
+</nav>
+
+<div class="container">
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- 1. CONCEITOS BÁSICOS -->
+<!-- ══════════════════════════════════════════════ -->
+<section id="conceitos">
+    <h2>1. Conceitos Básicos de Pesquisa Científica e Bioestatística</h2>
+
+    <h3>O que é Pesquisa Científica?</h3>
+    <div class="highlight">
+        Processo <strong>sistemático, organizado e crítico</strong> de produção de conhecimento, cujo objetivo é investigar um problema, responder a uma pergunta ou testar uma hipótese, utilizando <strong>métodos científicos</strong>.
+    </div>
+
+    <h3>Aplicações na Odontologia</h3>
+    <ul>
+        <li>Teste de materiais restauradores</li>
+        <li>Avaliação de técnicas clínicas</li>
+        <li>Estudos epidemiológicos (cárie, doença periodontal)</li>
+        <li>Pesquisas laboratoriais e clínicas</li>
+    </ul>
+
+    <h3>Etapas Básicas da Pesquisa</h3>
+    <ol>
+        <li>Problema de pesquisa</li>
+        <li>Revisão da literatura</li>
+        <li>Objetivo / Hipótese</li>
+        <li>Método</li>
+        <li>Coleta de dados</li>
+        <li>Análise estatística</li>
+        <li>Discussão</li>
+        <li>Resultados</li>
+        <li>Conclusão</li>
+    </ol>
+
+    <h3>Conceitos Fundamentais</h3>
+    <table>
+        <tr><th>Conceito</th><th>Definição</th><th>Exemplo (Odonto)</th></tr>
+        <tr>
+            <td><strong>Dado</strong></td>
+            <td>Toda informação coletada durante uma pesquisa</td>
+            <td>Nº de dentes cariados, índice CPO-D, idade, sexo</td>
+        </tr>
+        <tr>
+            <td><strong>População</strong></td>
+            <td>Conjunto <strong>total</strong> de indivíduos com as características estudadas</td>
+            <td>Todos os adolescentes de 12 anos de Recife</td>
+        </tr>
+        <tr>
+            <td><strong>Amostra</strong></td>
+            <td>Parte da população selecionada para representar o todo</td>
+            <td>300 dos 5.000 adolescentes avaliados</td>
+        </tr>
+    </table>
+
+    <h3>Variáveis no Estudo</h3>
+    <div class="two-col">
+        <div class="col-card">
+            <h4>Variável Independente</h4>
+            <p>Aquela que o pesquisador <strong>manipula</strong>.</p>
+            <p><em>Ex.: Tipo de resina composta (A, B, C)</em></p>
+        </div>
+        <div class="col-card">
+            <h4>Variável Dependente</h4>
+            <p>Aquela que o pesquisador <strong>mede</strong>.</p>
+            <p><em>Ex.: Contração de polimerização (%)</em></p>
+        </div>
+    </div>
+
+    <h3>Inferência Estatística</h3>
+    <div class="highlight">
+        Conjunto de métodos que permite tirar <strong>conclusões sobre uma população</strong> a partir de dados coletados em uma <strong>amostra</strong>.
+    </div>
+    <p>Na Odontologia, geralmente não é possível estudar todos os pacientes → trabalha-se com <strong>amostras representativas</strong>.</p>
+</section>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- 2. TIPOS DE VARIÁVEIS -->
+<!-- ══════════════════════════════════════════════ -->
+<section id="variaveis">
+    <h2>2. Tipos de Variáveis</h2>
+
+    <div class="highlight">
+        <strong>Variáveis</strong> são características que podem assumir diferentes valores ou categorias entre indivíduos ou ao longo do tempo.
+    </div>
+
+    <h3>Classificação Geral</h3>
+
+    <div class="two-col">
+        <div class="col-card" style="border-left: 4px solid var(--accent);">
+            <h4>🔢 Quantitativas (Numéricas)</h4>
+            <p>Expressas em números. Permitem cálculos matemáticos.</p>
+            <table>
+                <tr><th>Subtipo</th><th>Origem</th><th>Exemplos (Odonto)</th></tr>
+                <tr>
+                    <td><span class="badge badge-blue">Discreta</span></td>
+                    <td><strong>Contagem</strong><br>Valores inteiros</td>
+                    <td>
+                        • Nº dentes cariados<br>
+                        • Nº consultas realizadas<br>
+                        • Índice CPO-D<br>
+                        • Nº implantes instalados
+                    </td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-green">Contínua</span></td>
+                    <td><strong>Medição</strong><br>Valores decimais</td>
+                    <td>
+                        • Profundidade de bolsa (4,3 mm)<br>
+                        • Idade (12,5 anos)<br>
+                        • Peso corporal<br>
+                        • Nível de glicose salivar
+                    </td>
+                </tr>
+            </table>
+            <div class="highlight-orange">
+                ⚠️ <strong>Dica:</strong> Não existe 2,5 dentes → <em>discreta</em>. Se pode ter decimal → <em>contínua</em>.
+            </div>
+        </div>
+        <div class="col-card" style="border-left: 4px solid var(--purple);">
+            <h4>🏷️ Qualitativas (Categóricas)</h4>
+            <p>Representam categorias ou características, não números.</p>
+            <table>
+                <tr><th>Subtipo</th><th>Ordem?</th><th>Exemplos (Odonto)</th></tr>
+                <tr>
+                    <td><span class="badge badge-orange">Nominal</span></td>
+                    <td><strong>Não</strong> tem ordem</td>
+                    <td>
+                        • Sexo (M/F)<br>
+                        • Tipo sanguíneo<br>
+                        • Presença de cárie (sim/não)<br>
+                        • Tipo de prótese
+                    </td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-purple">Ordinal</span></td>
+                    <td><strong>Sim</strong>, tem ordem</td>
+                    <td>
+                        • Grau de inflamação (leve→moderada→severa)<br>
+                        • Classificação de dor<br>
+                        • Nível de higiene oral<br>
+                        • Estágio da doença periodontal
+                    </td>
+                </tr>
+            </table>
+            <div class="highlight-orange">
+                ⚠️ <strong>Dica:</strong> Ordinal tem ordem, mas <strong>não se sabe a distância exata</strong> entre as categorias.
+            </div>
+        </div>
+    </div>
+
+    <h3>Escalas de Mensuração</h3>
+    <table>
+        <tr><th>Escala</th><th>O que faz</th><th>Exemplo</th></tr>
+        <tr><td><strong>Nominal</strong></td><td>Classifica sem ordem</td><td>Tipo sanguíneo (A, B, AB, O)</td></tr>
+        <tr><td><strong>Ordinal</strong></td><td>Classifica com ordem</td><td>Estágio de câncer (I, II, III, IV)</td></tr>
+        <tr><td><strong>Intervalar</strong></td><td>Intervalos iguais, sem zero absoluto</td><td>Temperatura em °C</td></tr>
+        <tr><td><strong>Razão</strong></td><td>Zero absoluto, todas as operações</td><td>Peso, altura, idade</td></tr>
+    </table>
+
+    <h3>Resumo Descritivo por Tipo</h3>
+    <div class="highlight-green">
+        <strong>Variáveis Quantitativas</strong> → Média, mediana, desvio-padrão<br>
+        <strong>Variáveis Qualitativas</strong> → Frequência e porcentagem, moda
+    </div>
+
+    <h3>Tabela-Resumo Rápida</h3>
+    <table>
+        <tr><th>Variável</th><th>Tipo</th></tr>
+        <tr><td>Idade da criança</td><td><span class="badge badge-green">Quantitativa Contínua</span></td></tr>
+        <tr><td>Nº de dentes cariados</td><td><span class="badge badge-blue">Quantitativa Discreta</span></td></tr>
+        <tr><td>Sexo</td><td><span class="badge badge-orange">Qualitativa Nominal</span></td></tr>
+        <tr><td>Grau de higiene bucal</td><td><span class="badge badge-purple">Qualitativa Ordinal</span></td></tr>
+        <tr><td>Profundidade de sondagem (mm)</td><td><span class="badge badge-green">Quantitativa Contínua</span></td></tr>
+        <tr><td>Tipo de material restaurador</td><td><span class="badge badge-orange">Qualitativa Nominal</span></td></tr>
+        <tr><td>Intensidade de dor (leve/moderada/intensa)</td><td><span class="badge badge-purple">Qualitativa Ordinal</span></td></tr>
+        <tr><td>Falha do implante (sim/não)</td><td><span class="badge badge-orange">Nominal Dicotômica</span></td></tr>
+        <tr><td>Índice de Placa (%)</td><td><span class="badge badge-green">Quantitativa Contínua</span></td></tr>
+        <tr><td>Nº consultas no último ano</td><td><span class="badge badge-blue">Quantitativa Discreta</span></td></tr>
+        <tr><td>Risco de cárie (baixo/médio/alto)</td><td><span class="badge badge-purple">Qualitativa Ordinal</span></td></tr>
+        <tr><td>Escala Likert (1 a 5)</td><td><span class="badge badge-purple">Qualitativa Ordinal</span></td></tr>
+    </table>
+</section>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- 3. MEDIDAS -->
+<!-- ══════════════════════════════════════════════ -->
+<section id="medidas">
+    <h2>3. Medidas — Erros Sistemáticos e Aleatórios</h2>
+
+    <div class="highlight">
+        <strong>Medida</strong> = valor obtido ao avaliar uma característica de interesse.<br>
+        Exemplos: profundidade de sondagem (mm), índice CPO-D, espessura do esmalte.
+    </div>
+
+    <h3>Tipos de Erro de Medição</h3>
+    <p><strong>Erro</strong> = diferença entre o valor observado e o valor verdadeiro.</p>
+
+    <div class="two-col">
+        <div class="col-card" style="border-top: 4px solid var(--orange);">
+            <h4>⚡ Erro Aleatório (Random Error)</h4>
+            <ul>
+                <li>Variações <strong>imprevisíveis</strong></li>
+                <li>Ocorrem para mais <strong>ou</strong> para menos</li>
+                <li>Afetam a <strong>PRECISÃO</strong></li>
+                <li><strong>Reduzem-se com amostras maiores</strong></li>
+            </ul>
+            <p><strong>Exemplos em Odonto:</strong></p>
+            <ul>
+                <li>Variação na força da sondagem</li>
+                <li>Diferenças na posição da sonda</li>
+                <li>Variações na leitura de radiografias</li>
+                <li>Variação na colaboração do paciente</li>
+            </ul>
+        </div>
+        <div class="col-card" style="border-top: 4px solid var(--red);">
+            <h4>🎯 Erro Sistemático (Systematic Error)</h4>
+            <ul>
+                <li>Ocorre sempre na <strong>mesma direção</strong></li>
+                <li>Valores <strong>consistentemente</strong> maiores ou menores</li>
+                <li>Afetam a <strong>VALIDADE (gera viés/bias)</strong></li>
+                <li>Está no método, instrumento ou examinador</li>
+            </ul>
+            <p><strong>Exemplos em Odonto:</strong></p>
+            <ul>
+                <li>Sonda periodontal desgastada (valores menores)</li>
+                <li>Calibração inadequada de aparelhos</li>
+                <li>Examinador que sempre registra valores maiores</li>
+                <li>Seleção inadequada da amostra</li>
+            </ul>
+        </div>
+    </div>
+
+    <h3>Precisão vs. Exatidão (Validade)</h3>
+    <table>
+        <tr><th>Conceito</th><th>Definição</th><th>Relacionado a</th></tr>
+        <tr>
+            <td><strong>Precisão</strong></td>
+            <td>Reprodutibilidade / consistência das medidas</td>
+            <td><span class="badge badge-orange">Erro Aleatório</span></td>
+        </tr>
+        <tr>
+            <td><strong>Exatidão (Validade)</strong></td>
+            <td>Proximidade do valor medido ao valor real</td>
+            <td><span class="badge badge-red">Erro Sistemático</span></td>
+        </tr>
+    </table>
+
+    <div class="highlight-red">
+        ⚠️ Um estudo pode ser <strong>preciso mas inválido</strong> (com viés), <strong>válido mas impreciso</strong>, ou idealmente <strong>preciso e válido</strong>.
+    </div>
+
+    <h3>Tipos de Viés (Bias)</h3>
+    <table>
+        <tr><th>Tipo</th><th>O que é</th><th>Exemplo</th></tr>
+        <tr>
+            <td><strong>Viés de Seleção</strong></td>
+            <td>Participantes não representam a população</td>
+            <td>Estudar cárie só em pacientes que procuram atendimento</td>
+        </tr>
+        <tr>
+            <td><strong>Viés de Informação</strong></td>
+            <td>Erro na coleta ou registro</td>
+            <td>Registro incorreto de placa bacteriana</td>
+        </tr>
+        <tr>
+            <td><strong>Viés do Examinador</strong></td>
+            <td>Examinador influencia medições inconscientemente</td>
+            <td>Registrar valores maiores em pacientes fumantes por expectativa</td>
+        </tr>
+    </table>
+
+    <h3>Como Reduzir Erros</h3>
+    <div class="highlight-green">
+        <ul>
+            <li><strong>Calibração dos examinadores</strong> → reduz erro <strong>sistemático</strong></li>
+            <li><strong>Padronização de instrumentos</strong> (sondas calibradas)</li>
+            <li><strong>Protocolos padronizados</strong> de coleta</li>
+            <li><strong>Amostras representativas</strong></li>
+            <li><strong>Testes piloto</strong></li>
+            <li><strong>Dupla checagem</strong> dos dados</li>
+            <li><strong>Repetição de medições</strong> → reduz erro <strong>aleatório</strong></li>
+        </ul>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- 4. AMOSTRA E AMOSTRAGEM -->
+<!-- ══════════════════════════════════════════════ -->
+<section id="amostra">
+    <h2>4. Amostra e Amostragem</h2>
+
+    <h3>Conceitos</h3>
+    <table>
+        <tr><th>Termo</th><th>Definição</th></tr>
+        <tr><td><strong>População</strong></td><td>Conjunto total de indivíduos com características em comum, objeto do estudo</td></tr>
+        <tr><td><strong>Amostra</strong></td><td>Subconjunto da população selecionado para representar o todo</td></tr>
+        <tr><td><strong>Amostragem</strong></td><td>Processo de seleção dos indivíduos da população para compor a amostra</td></tr>
+        <tr><td><strong>Censo</strong></td><td>Quando se estuda <strong>todos</strong> os indivíduos da população</td></tr>
+    </table>
+
+    <h3>Para ser confiável, a amostra deve ser:</h3>
+    <div class="highlight-green">
+        <ol>
+            <li><strong>Representativa</strong> da população</li>
+            <li>Selecionada por <strong>métodos adequados</strong></li>
+            <li><strong>Suficiente em tamanho</strong></li>
+        </ol>
+    </div>
+
+    <h3>Por que usar amostras?</h3>
+    <ul>
+        <li>Limitação de <strong>tempo</strong></li>
+        <li><strong>Custos</strong> elevados</li>
+        <li>Facilidade <strong>operacional</strong></li>
+        <li>Rapidez nos resultados</li>
+        <li>Viabilidade <strong>logística</strong></li>
+    </ul>
+
+    <h3>Etapas para Estabelecer uma Amostra</h3>
+    <ol>
+        <li><strong>Definir a população de estudo</strong> (1º passo!)</li>
+        <li>Definir critérios de inclusão e exclusão</li>
+        <li>Definir o método de amostragem</li>
+        <li>Calcular o tamanho da amostra</li>
+    </ol>
+
+    <h3>Cálculo do Tamanho da Amostra — Fatores</h3>
+    <table>
+        <tr><th>Fator</th><th>Detalhe</th></tr>
+        <tr><td>Tamanho da população</td><td>Quanto maior, maior tende a ser a amostra</td></tr>
+        <tr><td>Nível de confiança</td><td>Geralmente <strong>95%</strong></td></tr>
+        <tr><td>Margem de erro</td><td>Comuns: 5% ou 3%</td></tr>
+        <tr><td>Variabilidade do fenômeno</td><td>Quanto maior, maior a amostra necessária</td></tr>
+    </table>
+
+    <h3>Tipos de Amostragem</h3>
+
+    <h4 style="color: var(--green);">✅ Amostragem Probabilística <small>(mais indicada para pesquisa científica)</small></h4>
+    <div class="highlight-green">
+        Todos os indivíduos têm <strong>chance conhecida</strong> de serem selecionados.
+    </div>
+
+    <table>
+        <tr><th>Tipo</th><th>Como funciona</th><th>Exemplo em Odonto</th></tr>
+        <tr>
+            <td><strong>Aleatória Simples</strong></td>
+            <td>Todos têm a mesma chance (sorteio)</td>
+            <td>Sortear pacientes de uma lista</td>
+        </tr>
+        <tr>
+            <td><strong>Sistemática</strong></td>
+            <td>Seleção em <strong>intervalos regulares</strong></td>
+            <td>1 a cada 10 atendimentos</td>
+        </tr>
+        <tr>
+            <td><strong>Estratificada</strong></td>
+            <td>Divide em <strong>estratos</strong> (grupos) → seleciona dentro de cada um</td>
+            <td>Estratos por idade, sexo, tipo de escola</td>
+        </tr>
+        <tr>
+            <td><strong>Por Conglomerados</strong></td>
+            <td>Seleciona <strong>grupos inteiros</strong></td>
+            <td>Escolher escolas e examinar <strong>todos</strong> os alunos dessas escolas</td>
+        </tr>
+    </table>
+
+    <h4 style="color: var(--orange);">⚠️ Amostragem Não Probabilística</h4>
+    <div class="highlight-orange">
+        Nem todos têm a mesma chance. Comum em estudos exploratórios ou preliminares.
+    </div>
+
+    <table>
+        <tr><th>Tipo</th><th>Como funciona</th><th>Exemplo</th></tr>
+        <tr>
+            <td><strong>Por Conveniência</strong></td>
+            <td>Indivíduos mais fáceis de acessar</td>
+            <td>Pacientes de clínica universitária</td>
+        </tr>
+        <tr>
+            <td><strong>Intencional</strong></td>
+            <td>Pesquisador seleciona com critérios específicos</td>
+            <td>Pacientes com doença periodontal avançada</td>
+        </tr>
+        <tr>
+            <td><strong>Por Cotas</strong></td>
+            <td>Proporções definidas previamente</td>
+            <td>50% homens, 50% mulheres</td>
+        </tr>
+    </table>
+</section>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- 5. DISTRIBUIÇÃO DE FREQUÊNCIA -->
+<!-- ══════════════════════════════════════════════ -->
+<section id="distribuicao">
+    <h2>5. Distribuição de Frequência, Tabelas e Gráficos</h2>
+
+    <h3>O que é Frequência em Estatística?</h3>
+    <div class="highlight">
+        <strong>Frequência</strong> = número de vezes que um valor ou categoria aparece em um conjunto de dados.<br><br>
+        <strong>Por que importa?</strong> Resume grandes volumes de dados, evidencia padrões, tendências e distribuições.<br>
+        <strong>Base para análises:</strong> sustenta tabelas, gráficos e técnicas estatísticas mais avançadas.
+    </div>
+
+    <h3>Tipos de Frequência</h3>
+    <table>
+        <tr><th>Símbolo</th><th>Nome</th><th>O que é</th></tr>
+        <tr>
+            <td><strong>fi</strong></td>
+            <td>Frequência absoluta</td>
+            <td>Número bruto de ocorrências de um valor no conjunto</td>
+        </tr>
+        <tr>
+            <td><strong>fri</strong></td>
+            <td>Frequência relativa</td>
+            <td>Proporção do total (fi / n), geralmente em %. Facilita comparações entre grupos de tamanhos diferentes</td>
+        </tr>
+        <tr>
+            <td><strong>fri %</strong></td>
+            <td>Frequência relativa percentual</td>
+            <td>fri × 100</td>
+        </tr>
+        <tr>
+            <td><strong>Fi</strong></td>
+            <td>Frequência acumulada</td>
+            <td>Soma progressiva das frequências até aquele ponto da distribuição</td>
+        </tr>
+        <tr>
+            <td><strong>Fri</strong></td>
+            <td>Freq. relativa acumulada</td>
+            <td>Soma das freq. relativas até aquele ponto</td>
+        </tr>
+    </table>
+
+    <h3>Como Construir uma Distribuição de Frequência</h3>
+    <div class="highlight-green">
+        <ol>
+            <li><strong>Coleta de dados</strong> — reúna todos os dados, garantindo precisão e completude</li>
+            <li><strong>Definição das classes/categorias</strong> — intervalos (dados contínuos) ou categorias (dados categóricos)</li>
+            <li><strong>Contagem das ocorrências</strong> — conte quantos elementos pertencem a cada classe</li>
+            <li><strong>Montagem da tabela de frequência</strong> — classes/categorias com suas respectivas frequências</li>
+            <li><strong>Visualização com histograma</strong> — representação gráfica da distribuição</li>
+            <li><strong>Análise dos resultados</strong> — interprete para identificar padrões, tendências ou anomalias</li>
+        </ol>
+    </div>
+
+    <h3>Tabela Simples de Frequência</h3>
+    <div class="two-col">
+        <div class="col-card">
+            <h4>O que mostra</h4>
+            <p>Lista cada valor/categoria e sua frequência absoluta (fi), <strong>sem agrupamento</strong>. Ideal quando há poucas categorias.</p>
+            <h4>Quando usar</h4>
+            <p>Dados qualitativos (ex.: cor) ou quantitativos discretos (ex.: nº de faltas), para ver rapidamente "o que mais aparece".</p>
+        </div>
+        <div class="col-card">
+            <h4>Exemplo (dados reais)</h4>
+            <p><em>Nº de irmãos (turma, n=20):</em></p>
+            <table>
+                <tr><th>Nº irmãos</th><th>fi</th></tr>
+                <tr><td>0</td><td>6</td></tr>
+                <tr><td>1</td><td>9</td></tr>
+                <tr><td>2</td><td>4</td></tr>
+                <tr><td>3</td><td>1</td></tr>
+                <tr><td><strong>Total</strong></td><td><strong>20</strong></td></tr>
+            </table>
+            <p>⚠️ A soma das frequências deve ser igual a <strong>n</strong>.</p>
+        </div>
+    </div>
+
+    <h3>Exemplo Completo: Tabela de Distribuição de Frequência</h3>
+    <p><em>Nº de dentes cariados em 20 crianças:</em></p>
+    <table>
+        <tr><th>Nº dentes cariados</th><th>fi</th><th>fri</th><th>fri %</th><th>Fi</th></tr>
+        <tr><td>0</td><td>4</td><td>0,20</td><td>20%</td><td>4</td></tr>
+        <tr><td>1</td><td>6</td><td>0,30</td><td>30%</td><td>10</td></tr>
+        <tr><td>2</td><td>5</td><td>0,25</td><td>25%</td><td>15</td></tr>
+        <tr><td>3</td><td>3</td><td>0,15</td><td>15%</td><td>18</td></tr>
+        <tr><td>4</td><td>2</td><td>0,10</td><td>10%</td><td>20</td></tr>
+        <tr><td><strong>Total</strong></td><td><strong>20</strong></td><td><strong>1,00</strong></td><td><strong>100%</strong></td><td>—</td></tr>
+    </table>
+
+    <h3>Tabelas de Frequência Agrupada (com Classes)</h3>
+    <div class="highlight">
+        Quando os dados são <strong>contínuos</strong> ou há muitos valores distintos, agrupamos em <strong>intervalos de classe</strong> (faixas como 0–10, 11–20, etc.).
+    </div>
+
+    <div class="two-col">
+        <div class="col-card">
+            <h4>📊 Classes (Intervalos)</h4>
+            <p>Dividem os dados em faixas, facilitando a visualização de padrões.</p>
+        </div>
+        <div class="col-card">
+            <h4>📈 Frequência Relativa</h4>
+            <p>Indica a proporção de dados em cada classe, útil para comparações.</p>
+        </div>
+    </div>
+
+    <h4>Como definir as classes</h4>
+    <div class="highlight">
+        <ul>
+            <li><strong>Amplitude total</strong> = valor máximo − valor mínimo</li>
+            <li><strong>Nº de classes (k)</strong> ≈ √n (raiz quadrada do nº de observações)</li>
+            <li><strong>Intervalo de classe (h)</strong> = amplitude total / k</li>
+        </ul>
+    </div>
+
+    <h3>Como Ler Tabelas de Frequência</h3>
+    <div class="highlight-green">
+        Interpretar tabelas é ler rapidamente o que os números dizem sobre o perfil dos dados: comparar valores, localizar picos e perceber se a distribuição está equilibrada ou concentrada.
+    </div>
+
+    <table>
+        <tr><th>O que observar</th><th>Como fazer</th><th>Exemplo</th></tr>
+        <tr>
+            <td><strong>Pico e cauda</strong></td>
+            <td>Identifique a categoria com maior e menor frequência</td>
+            <td>Se "A" tem 45 e "B" tem 15 → "A" é 3× "B" (concentração em A)</td>
+        </tr>
+        <tr>
+            <td><strong>Freq. relativa (%)</strong></td>
+            <td>Use % para comparar grupos com tamanhos diferentes</td>
+            <td>30% em "A" comunica melhor que "60 casos" quando o total muda</td>
+        </tr>
+        <tr>
+            <td><strong>Freq. acumulada</strong></td>
+            <td>Mostra "quanto já foi somado" até uma categoria → define cortes</td>
+            <td>Se até "0–2 dias" acumula 80%, priorize ações para os 20% restantes</td>
+        </tr>
+    </table>
+
+    <h3>Principais Características de uma Distribuição</h3>
+    <div class="two-col">
+        <div class="col-card">
+            <h4>Forma</h4>
+            <p>Pode ser <strong>simétrica</strong> ou <strong>assimétrica</strong>, indicando como os dados se distribuem em relação ao centro.</p>
+        </div>
+        <div class="col-card">
+            <h4>Tendência Central</h4>
+            <p>Inclui <strong>média, mediana e moda</strong>; mostra onde os dados tendem a se concentrar.</p>
+        </div>
+        <div class="col-card">
+            <h4>Dispersão</h4>
+            <p>Medidas como <strong>variância</strong> e <strong>desvio padrão</strong> revelam o grau de diversidade dos dados.</p>
+        </div>
+        <div class="col-card">
+            <h4>Formato (Modalidade)</h4>
+            <p>Pode ser <strong>unimodal</strong> (1 pico) ou <strong>bimodal</strong> (2 picos), indicando quantas modas existem.</p>
+        </div>
+    </div>
+
+    <h3>Tipos de Gráficos</h3>
+    <table>
+        <tr><th>Gráfico</th><th>Usado para</th><th>Tipo de variável</th></tr>
+        <tr>
+            <td><strong>Gráfico de barras</strong></td>
+            <td>Comparar categorias (barras separadas)</td>
+            <td><span class="badge badge-orange">Qualitativa</span></td>
+        </tr>
+        <tr>
+            <td><strong>Gráfico de setores (pizza)</strong></td>
+            <td>Mostrar proporções do total</td>
+            <td><span class="badge badge-orange">Qualitativa</span></td>
+        </tr>
+        <tr>
+            <td><strong>Histograma</strong></td>
+            <td>Distribuição de dados (barras juntas)</td>
+            <td><span class="badge badge-green">Quantitativa Contínua</span></td>
+        </tr>
+        <tr>
+            <td><strong>Polígono de frequência</strong></td>
+            <td>Linha conectando pontos médios das classes</td>
+            <td><span class="badge badge-green">Quantitativa</span></td>
+        </tr>
+        <tr>
+            <td><strong>Ogiva</strong></td>
+            <td>Frequência acumulada</td>
+            <td><span class="badge badge-green">Quantitativa</span></td>
+        </tr>
+        <tr>
+            <td><strong>Box-plot</strong></td>
+            <td>Mediana, quartis, outliers</td>
+            <td><span class="badge badge-green">Quantitativa</span></td>
+        </tr>
+    </table>
+
+    <div class="highlight-orange">
+        ⚠️ <strong>Histograma ≠ Gráfico de barras:</strong> no histograma as barras ficam <strong>juntas</strong> (representam intervalos contínuos); no gráfico de barras ficam <strong>separadas</strong> (categorias discretas).
+    </div>
+
+    <h3>Erros Comuns na Construção e Interpretação</h3>
+    <div class="two-col">
+        <div class="col-card" style="border-top: 4px solid var(--red);">
+            <h4>❌ Tipos de erros</h4>
+            <ul>
+                <li>Uso inadequado de classes</li>
+                <li>Tabelas mal definidas</li>
+                <li>Frequências acumuladas incorretas</li>
+                <li>Interpretação errada da freq. relativa</li>
+            </ul>
+            <h4>Causas</h4>
+            <ul>
+                <li>Falta de atenção</li>
+                <li>Desconhecimento das técnicas</li>
+                <li>Viés de amostragem</li>
+                <li>Omissão de dados relevantes</li>
+            </ul>
+        </div>
+        <div class="col-card" style="border-top: 4px solid var(--green);">
+            <h4>✅ Prevenção</h4>
+            <ul>
+                <li>Revisão cuidadosa dos dados</li>
+                <li>Treinamento em estatística</li>
+                <li>Uso de boas ferramentas</li>
+                <li>Validação dos resultados</li>
+            </ul>
+            <h4>Impactos de erros</h4>
+            <ul>
+                <li>Validade comprometida</li>
+                <li>Conclusões erradas</li>
+                <li>Decisões baseadas em dados incorretos</li>
+            </ul>
+        </div>
+    </div>
+
+    <h3>Distribuições Estatísticas Importantes</h3>
+    <div class="two-col">
+        <div class="col-card">
+            <h4>Distribuição Normal (Gaussiana)</h4>
+            <ul>
+                <li>Formato de sino, simétrica</li>
+                <li>Muito frequente em medidas biológicas</li>
+                <li>Ex.: resistência, espessura, contração de resina</li>
+                <li>Média = Mediana = Moda</li>
+            </ul>
+        </div>
+        <div class="col-card">
+            <h4>Distribuição Binomial</h4>
+            <ul>
+                <li>Dados do tipo "sim/não"</li>
+                <li>Ex.: presença ou ausência de cárie</li>
+                <li>Número fixo de tentativas</li>
+                <li>Probabilidade constante</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- 6. ARITMÉTICA (MEDIDAS DE TENDÊNCIA CENTRAL E DISPERSÃO) -->
+<!-- ══════════════════════════════════════════════ -->
+<section id="aritmetica">
+    <h2>6. Aritmética — Medidas de Tendência Central e Dispersão</h2>
+
+    <h3>Medidas de Tendência Central</h3>
+    <p>Resumem os dados em um <strong>valor representativo</strong> do conjunto.</p>
+
+    <table>
+        <tr><th>Medida</th><th>Definição</th><th>Quando usar</th></tr>
+        <tr>
+            <td><strong>Média Aritmética (x̄)</strong></td>
+            <td>Soma de todos os valores ÷ nº de valores</td>
+            <td>Dados simétricos, sem outliers</td>
+        </tr>
+        <tr>
+            <td><strong>Mediana (Md)</strong></td>
+            <td>Valor central dos dados ordenados</td>
+            <td>Dados assimétricos ou com outliers</td>
+        </tr>
+        <tr>
+            <td><strong>Moda (Mo)</strong></td>
+            <td>Valor mais frequente</td>
+            <td>Variáveis qualitativas ou frequências</td>
+        </tr>
+    </table>
+
+    <h4>Fórmulas</h4>
+
+    <div class="formula">
+        Média: x̄ = (x₁ + x₂ + ... + xₙ) / n = Σxi / n
+    </div>
+
+    <div class="formula">
+        Média Ponderada: x̄ = Σ(xi · fi) / Σfi
+    </div>
+
+    <div class="highlight">
+        <strong>Mediana:</strong>
+        <ul>
+            <li>n ímpar → valor da posição (n+1)/2</li>
+            <li>n par → média dos dois valores centrais (posições n/2 e n/2 + 1)</li>
+        </ul>
+    </div>
+
+    <h3>Medidas de Dispersão (Variabilidade)</h3>
+    <p>Medem o <strong>quanto os dados se espalham</strong> em torno da tendência central.</p>
+
+    <table>
+        <tr><th>Medida</th><th>Definição</th><th>Observação</th></tr>
+        <tr>
+            <td><strong>Amplitude</strong></td>
+            <td>Valor máximo − valor mínimo</td>
+            <td>Mais simples, sensível a outliers</td>
+        </tr>
+        <tr>
+            <td><strong>Variância (s²)</strong></td>
+            <td>Média dos desvios ao quadrado</td>
+            <td>Unidade ao quadrado</td>
+        </tr>
+        <tr>
+            <td><strong>Desvio-padrão (s ou DP)</strong></td>
+            <td>√variância</td>
+            <td>Mesma unidade dos dados (mais usado)</td>
+        </tr>
+        <tr>
+            <td><strong>Coeficiente de variação (CV)</strong></td>
+            <td>(s / x̄) × 100%</td>
+            <td>Permite comparar dispersões de diferentes variáveis</td>
+        </tr>
+    </table>
+
+    <div class="formula">
+        Variância (amostral): s² = Σ(xi − x̄)² / (n − 1)
+    </div>
+
+    <div class="formula">
+        Desvio-padrão: s = √s² = √[ Σ(xi − x̄)² / (n − 1) ]
+    </div>
+
+    <div class="formula">
+        CV = (s / x̄) × 100%
+    </div>
+
+    <h3>Medidas de Posição (Quartis e Percentis)</h3>
+    <table>
+        <tr><th>Medida</th><th>O que indica</th></tr>
+        <tr><td><strong>Q1</strong> (1º quartil)</td><td>25% dos dados estão abaixo</td></tr>
+        <tr><td><strong>Q2</strong> (2º quartil)</td><td>50% dos dados = Mediana</td></tr>
+        <tr><td><strong>Q3</strong> (3º quartil)</td><td>75% dos dados estão abaixo</td></tr>
+        <tr><td><strong>IIQ</strong> (Intervalo interquartil)</td><td>Q3 − Q1 (dispersão dos 50% centrais)</td></tr>
+    </table>
+
+    <h3>Exemplo Prático</h3>
+    <div class="highlight">
+        <strong>Dados:</strong> Profundidade de sondagem (mm) de 7 sítios: 2, 3, 3, 4, 5, 5, 8<br><br>
+        <strong>Média:</strong> (2+3+3+4+5+5+8) / 7 = 30/7 ≈ <strong>4,3 mm</strong><br>
+        <strong>Mediana:</strong> 4º valor (n=7 → posição 4) = <strong>4 mm</strong><br>
+        <strong>Moda:</strong> 3 e 5 (bimodal)<br>
+        <strong>Amplitude:</strong> 8 − 2 = <strong>6 mm</strong>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- 7. PROBABILIDADE -->
+<!-- ══════════════════════════════════════════════ -->
+<section id="probabilidade">
+    <h2>7. Probabilidade</h2>
+
+    <h3>Conceito</h3>
+    <div class="highlight">
+        A probabilidade mede a <strong>chance de um evento ocorrer</strong>, variando de <strong>0 a 1</strong> (ou 0% a 100%).
+        <ul>
+            <li><strong>P = 0</strong> → evento impossível</li>
+            <li><strong>P = 1</strong> → evento certo</li>
+        </ul>
+    </div>
+
+    <h3>Fórmula Básica</h3>
+    <div class="formula">
+        P(A) = nº de resultados favoráveis / nº total de resultados possíveis
+    </div>
+
+    <h3>Aplicação na Odontologia</h3>
+    <ul>
+        <li>Estimar <strong>erros</strong></li>
+        <li>Avaliar <strong>riscos</strong></li>
+        <li>Interpretar <strong>resultados estatísticos</strong></li>
+    </ul>
+
+    <h3>Regras Fundamentais</h3>
+    <table>
+        <tr><th>Regra</th><th>Fórmula</th><th>Quando usar</th></tr>
+        <tr>
+            <td><strong>Adição (OR)</strong><br>Eventos mutuamente exclusivos</td>
+            <td>P(A ou B) = P(A) + P(B)</td>
+            <td>Um evento OU outro (sem interseção)</td>
+        </tr>
+        <tr>
+            <td><strong>Adição (OR)</strong><br>Eventos não exclusivos</td>
+            <td>P(A ou B) = P(A) + P(B) − P(A e B)</td>
+            <td>Podem ocorrer juntos</td>
+        </tr>
+        <tr>
+            <td><strong>Multiplicação (AND)</strong><br>Eventos independentes</td>
+            <td>P(A e B) = P(A) × P(B)</td>
+            <td>Um evento E outro (sem influência mútua)</td>
+        </tr>
+        <tr>
+            <td><strong>Complementar</strong></td>
+            <td>P(Ā) = 1 − P(A)</td>
+            <td>Probabilidade de NÃO ocorrer</td>
+        </tr>
+    </table>
+
+    <h3>Exemplo Aplicado</h3>
+    <div class="highlight">
+        Se a prevalência de cárie em crianças de 12 anos é 60%, ao selecionar uma criança ao acaso:<br>
+        • P(ter cárie) = <strong>0,60</strong><br>
+        • P(NÃO ter cárie) = 1 − 0,60 = <strong>0,40</strong><br>
+        • P(duas crianças independentes terem cárie) = 0,60 × 0,60 = <strong>0,36</strong>
+    </div>
+
+    <h3>Testes de Hipóteses</h3>
+    <div class="two-col">
+        <div class="col-card">
+            <h4>H₀ — Hipótese Nula</h4>
+            <p><strong>Não há</strong> diferença ou efeito.</p>
+            <p><em>Ex.: Não há diferença na contração entre os tipos de resina.</em></p>
+        </div>
+        <div class="col-card">
+            <h4>H₁ — Hipótese Alternativa</h4>
+            <p><strong>Há</strong> diferença ou efeito.</p>
+            <p><em>Ex.: Há diferença na contração entre os tipos de resina.</em></p>
+        </div>
+    </div>
+
+    <h3>P-valor e Nível de Significância</h3>
+    <table>
+        <tr><th>Conceito</th><th>Detalhe</th></tr>
+        <tr>
+            <td><strong>P-valor</strong></td>
+            <td>Probabilidade de obter o resultado observado <strong>se H₀ for verdadeira</strong></td>
+        </tr>
+        <tr>
+            <td><strong>α (alfa)</strong></td>
+            <td>Limite máximo de erro aceitável. Geralmente <strong>α = 0,05 (5%)</strong></td>
+        </tr>
+    </table>
+
+    <div class="two-col">
+        <div class="col-card" style="background: #eafaf1; border: 2px solid var(--green);">
+            <h4 style="color: var(--green);">P ≤ 0,05</h4>
+            <p><strong>Resultado SIGNIFICATIVO</strong></p>
+            <p>Rejeita H₀ → Aceita H₁</p>
+            <p>O resultado provavelmente NÃO ocorreu ao acaso.</p>
+        </div>
+        <div class="col-card" style="background: #fdedec; border: 2px solid var(--red);">
+            <h4 style="color: var(--red);">P > 0,05</h4>
+            <p><strong>Resultado NÃO significativo</strong></p>
+            <p>Não rejeita H₀</p>
+            <p>Não há evidência suficiente para afirmar diferença.</p>
+        </div>
+    </div>
+
+    <div class="highlight-orange">
+        ⚠️ <strong>Interpretação correta:</strong> α = 0,05 significa aceitar até <strong>5% de chance</strong> de concluir que há diferença quando, na verdade, <strong>não há</strong> (erro tipo I).
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- EXERCÍCIOS DE REVISÃO -->
+<!-- ══════════════════════════════════════════════ -->
+<section id="exercicios">
+    <h2>📝 Exercícios de Revisão (com Gabarito)</h2>
+
+    <h3>Tipos de Variáveis</h3>
+
+    <details class="quiz">
+        <summary>Q1: "Número de dentes com cárie cavitada" é classificada como:</summary>
+        <p>✅ D) Quantitativa discreta — resulta de contagem (valores inteiros).</p>
+    </details>
+
+    <details class="quiz">
+        <summary>Q2: "Profundidade de sondagem (mm)" é:</summary>
+        <p>✅ C) Quantitativa contínua — resulta de medição, admite decimais.</p>
+    </details>
+
+    <details class="quiz">
+        <summary>Q3: "Tipo de material restaurador" (resina, ionômero, cerâmica) é:</summary>
+        <p>✅ C) Qualitativa nominal — categorias sem ordem.</p>
+    </details>
+
+    <details class="quiz">
+        <summary>Q4: "Intensidade de dor" (sem dor, leve, moderada, intensa) é:</summary>
+        <p>✅ B) Qualitativa ordinal — categorias com ordem lógica.</p>
+    </details>
+
+    <details class="quiz">
+        <summary>Q5: Tabagismo × doença periodontal. Identificar papel das variáveis:</summary>
+        <p>✅ C) Tabagismo é independente; doença periodontal é dependente; idade pode ser confundidora.</p>
+    </details>
+
+    <details class="quiz">
+        <summary>Q6: "Falha do implante (sim/não)" é:</summary>
+        <p>✅ A) Qualitativa nominal (dicotômica) — duas categorias sem ordem.</p>
+    </details>
+
+    <details class="quiz">
+        <summary>Q7: Associar variável → resumo: I. tipo de lesão; II. Likert 1–5; III. sondagem (mm)</summary>
+        <p>✅ B) I → proporções/moda; II → mediana (percentis); III → média e desvio-padrão.</p>
+    </details>
+
+    <details class="quiz">
+        <summary>Q8: (1) Índice de Placa %; (2) Nº consultas; (3) Risco de cárie (baixo/médio/alto)</summary>
+        <p>✅ B) (1) contínua; (2) discreta; (3) ordinal.</p>
+    </details>
+
+    <details class="quiz">
+        <summary>Q9: Afirmações sobre variáveis — quais são corretas?<br>
+        I. Nominais sem ordem ✓ | II. Ordinais ordenam sem intervalos iguais ✓ | III. Discretas medem com instrumento ✗ | IV. Contínuas admitem frações ✓</summary>
+        <p>✅ B) Apenas I, II e IV. (Discretas resultam de CONTAGEM, não de medição com instrumento.)</p>
+    </details>
+
+    <details class="quiz">
+        <summary>Q10: I. Profund. sondagem (mm) é quant. contínua. PORQUE II. É obtida por contagem de sítios.</summary>
+        <p>✅ C) I verdadeira e II falsa. (É contínua porque resulta de MEDIÇÃO, não de contagem.)</p>
+    </details>
+
+    <details class="quiz">
+        <summary>Q11: I. Likert 1–5 é ordinal. PORQUE II. Distância entre categorias não é garantida.</summary>
+        <p>✅ A) I e II verdadeiras, e II justifica I.</p>
+    </details>
+
+    <h3>Medidas — Erros</h3>
+
+    <details class="quiz">
+        <summary>Q1: Examinador sempre registra valores maiores por pressão excessiva na sondagem. Tipo de erro?</summary>
+        <p>✅ B) Erro sistemático — ocorre sempre na mesma direção.</p>
+    </details>
+
+    <details class="quiz">
+        <summary>Q2: Variação nas medidas ao repetir análise de radiografias pelo mesmo examinador:</summary>
+        <p>✅ C) Erro aleatório — variação imprevisível.</p>
+    </details>
+
+    <details class="quiz">
+        <summary>Q3: Espelho com distorção classificando lesões como maiores:</summary>
+        <p>✅ A) Erro sistemático relacionado ao instrumento.</p>
+    </details>
+
+    <details class="quiz">
+        <summary>Q4: Valores diferentes em medições consecutivas de mobilidade dentária:</summary>
+        <p>✅ B) Erro aleatório.</p>
+    </details>
+
+    <details class="quiz">
+        <summary>Q5: Examinador sem treinamento classifica desgaste consistentemente diferente dos especialistas:</summary>
+        <p>✅ B) Erro sistemático do examinador.</p>
+    </details>
+
+    <details class="quiz">
+        <summary>Q6: Grande variação entre medidas repetidas de fluxo salivar com equipamento calibrado:</summary>
+        <p>✅ B) Erro aleatório das medições.</p>
+    </details>
+
+    <details class="quiz">
+        <summary>Q7: Examinador sem calibração leva principalmente a:</summary>
+        <p>✅ B) Aumento do erro sistemático.</p>
+    </details>
+
+    <details class="quiz">
+        <summary>Q8: Calibração de examinadores serve para:</summary>
+        <p>✅ C) Reduzir erros sistemáticos nas medições.</p>
+    </details>
+
+    <details class="quiz">
+        <summary>Q9: Equipamento sempre fornece valores menores que os reais:</summary>
+        <p>✅ A) Erro sistemático.</p>
+    </details>
+
+    <details class="quiz">
+        <summary>Q10: Repetição de medições + instrumentos calibrados servem para:</summary>
+        <p>✅ C) Reduzir erros sistemáticos e aleatórios.</p>
+    </details>
+
+    <h3>Amostra e Amostragem</h3>
+
+    <details class="quiz">
+        <summary>Q1: Amostra é definida como:</summary>
+        <p>✅ C) Subconjunto da população selecionado para representar o todo.</p>
+    </details>
+
+    <details class="quiz">
+        <summary>Q2: Quando o pesquisador estuda TODOS os indivíduos da população:</summary>
+        <p>✅ D) Censo.</p>
+    </details>
+
+    <details class="quiz">
+        <summary>Q3: Exemplo de população em Odontologia:</summary>
+        <p>✅ C) Crianças de 12 anos de um município.</p>
+    </details>
+
+    <details class="quiz">
+        <summary>Q4: Para ser confiável, a amostra deve ser:</summary>
+        <p>✅ C) Representativa, bem selecionada e suficiente em tamanho.</p>
+    </details>
+
+    <details class="quiz">
+        <summary>Q5: Amostragem é:</summary>
+        <p>✅ D) Processo de seleção de indivíduos da população para compor a amostra.</p>
+    </details>
+
+    <details class="quiz">
+        <summary>Q6: NÃO justifica o uso de amostras:</summary>
+        <p>✅ E) Aumento do erro estatístico.</p>
+    </details>
+
+    <details class="quiz">
+        <summary>Q7: Primeiro passo para estabelecer uma amostra:</summary>
+        <p>✅ D) Definir a população de estudo.</p>
+    </details>
+
+    <details class="quiz">
+        <summary>Q8: Nível de confiança mais comum:</summary>
+        <p>✅ C) 95%.</p>
+    </details>
+
+    <details class="quiz">
+        <summary>Q9: Na amostragem probabilística:</summary>
+        <p>✅ C) Todos os indivíduos da população têm chance conhecida de seleção.</p>
+    </details>
+
+    <details class="quiz">
+        <summary>Q10: Selecionar escolas e examinar todos os alunos dessas escolas é:</summary>
+        <p>✅ E) Amostragem por conglomerados.</p>
+    </details>
+</section>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- MAPA MENTAL FINAL -->
+<!-- ══════════════════════════════════════════════ -->
+<section>
+    <h2>🧠 Mapa Mental Rápido — Cheat Sheet</h2>
+
+    <div class="highlight" style="font-size: .95rem;">
+        <strong>VARIÁVEL</strong><br>
+        ├── <span class="badge badge-blue">Quantitativa</span><br>
+        │&emsp;&emsp;├── <strong>Discreta</strong> → contagem, inteiros (dentes cariados)<br>
+        │&emsp;&emsp;└── <strong>Contínua</strong> → medição, decimais (sondagem mm)<br>
+        └── <span class="badge badge-purple">Qualitativa</span><br>
+        &emsp;&emsp;&emsp;├── <strong>Nominal</strong> → sem ordem (sexo, tipo sanguíneo)<br>
+        &emsp;&emsp;&emsp;└── <strong>Ordinal</strong> → com ordem (dor: leve→intensa)<br>
+        <br>
+        <strong>ERROS</strong><br>
+        ├── <span class="badge badge-orange">Aleatório</span> → imprevisível, afeta <strong>precisão</strong>, reduz com n maior<br>
+        └── <span class="badge badge-red">Sistemático</span> → mesma direção, gera <strong>viés</strong>, reduz com calibração<br>
+        <br>
+        <strong>AMOSTRAGEM</strong><br>
+        ├── <span class="badge badge-green">Probabilística</span> (chance conhecida)<br>
+        │&emsp;&emsp;├── Aleatória simples (sorteio)<br>
+        │&emsp;&emsp;├── Sistemática (intervalos regulares)<br>
+        │&emsp;&emsp;├── Estratificada (estratos + seleção)<br>
+        │&emsp;&emsp;└── Conglomerados (grupos inteiros)<br>
+        └── <span class="badge badge-orange">Não probabilística</span><br>
+        &emsp;&emsp;&emsp;├── Conveniência (mais acessível)<br>
+        &emsp;&emsp;&emsp;├── Intencional (critérios específicos)<br>
+        &emsp;&emsp;&emsp;└── Cotas (proporções definidas)<br>
+        <br>
+        <strong>P-VALOR</strong><br>
+        ├── P ≤ 0,05 → <span class="badge badge-green">Significativo</span> → rejeita H₀<br>
+        └── P > 0,05 → <span class="badge badge-red">Não significativo</span> → não rejeita H₀
+    </div>
+</section>
+
+</div>
+
+<footer>
+    Material de revisão gerado a partir das aulas da disciplina Bases para Pesquisa Científica — UNINASSAU &middot; Abril 2026
+</footer>
+
+<script>
+// Wrap all tables in responsive scroll containers
+document.querySelectorAll('table').forEach(function(t){
+    if(t.parentElement.classList.contains('table-responsive')) return;
+    var w=document.createElement('div');
+    w.className='table-responsive';
+    w.style.maxWidth='100%';
+    t.parentNode.insertBefore(w,t);
+    w.appendChild(t);
+});
+// Prevent any element from exceeding viewport
+document.querySelectorAll('.col-card, .highlight, .highlight-green, .highlight-orange, .highlight-red').forEach(function(el){
+    el.style.maxWidth='100%';
+});
+</script>
+</body>
+</html>
